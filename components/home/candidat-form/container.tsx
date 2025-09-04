@@ -276,7 +276,7 @@ export function CreateJobCandidateModal({
         name: candidateData.name || "",
         title: candidateData.title || "",
         location: candidateData.location || "",
-        experience: candidateData.experience || 0,
+        experience: candidateData.experience || "",
         deployment: candidateData.deployment || "",
         clearance:
           candidateData.englishLevel ||
