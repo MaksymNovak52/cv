@@ -55,7 +55,7 @@ export function HeaderContainer({
               <h3 className="text-[#211C1A] text-base font-bold">
                 Nexus Protocol
               </h3>
-              <div className="flex flex-row items-center gap-2 text-[#857F78] text-[10px] font-bold">
+              <div className="flex flex-row items-center gap-2 text-[#857F78] text-[10px] font-bold uppercase">
                 <p>{data?.total_candidates} new candidates</p>
                 <p>/</p>
 

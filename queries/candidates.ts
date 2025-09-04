@@ -7,6 +7,8 @@ import {
   fetchCandidatesByJob,
   fetchCounts,
   fetchJobDetails,
+  fetchPendingCandidatesByJob,
+  fetchPendingCountsForAllJobs,
   removeCandidateFromJob,
   toggleFavorite,
   updateApplicationStatusByName,
@@ -86,7 +88,7 @@ export const useCreateJobWithCandidate = () => {
         requirements: string;
         title: string;
         location: string;
-        experience: number;
+        experience: string;
         deployment: string;
         clearance: string;
         highlights: string;
@@ -101,6 +103,7 @@ export const useCreateJobWithCandidate = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      queryClient.invalidateQueries({ queryKey: ["pendingCounts"] });
       queryClient.invalidateQueries({ queryKey: ["candidates"] });
     },
   });
@@ -136,7 +139,21 @@ export const useUpdateApplicationStatus = (jobId?: string) => {
       updateApplicationStatusByName(vars.applicationId, vars.statusName),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["candidates"] });
+      queryClient.invalidateQueries({ queryKey: ["pendingCounts"] });
       queryClient.invalidateQueries({ queryKey: ["favoritesCount", jobId] });
     },
+  });
+};
+export const usePendingCandidatesByJob = (jobId: string) => {
+  return useQuery({
+    queryKey: ["pendingCandidates", jobId],
+    queryFn: () => fetchPendingCandidatesByJob(jobId),
+    enabled: !!jobId,
+  });
+};
+export const usePendingCountsForAllJobs = () => {
+  return useQuery({
+    queryKey: ["pendingCounts"],
+    queryFn: fetchPendingCountsForAllJobs,
   });
 };

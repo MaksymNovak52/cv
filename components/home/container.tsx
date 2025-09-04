@@ -5,6 +5,7 @@ import {
   useFavoritesCount,
   useJobDetails,
   useJobs,
+  usePendingCountsForAllJobs,
 } from "@/queries/candidates";
 import { Job } from "@/type";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -126,6 +127,7 @@ export function AllCandidatesList() {
     selectedJobId as string
   );
   const { data: favoritesCount } = useFavoritesCount(selectedJobId as string);
+  const { data: pendingCounts = [] } = usePendingCountsForAllJobs();
 
   const counts = useMemo(() => {
     let c = { new: 0, interview: 0, notSure: 0, reject: 0 };
@@ -157,6 +159,14 @@ export function AllCandidatesList() {
     });
   }, [candidatesByJob, activeTab]);
 
+  const getCandidatesNewCountForJob = (jobId: string) => {
+    if (jobId === selectedJobId) {
+      return counts.new;
+    }
+
+    return 0;
+  };
+
   useEffect(() => {
     if ((!selectedJobId && jobs?.[0]?.job_id) || jobs?.length === 1) {
       setSelectedJobId(jobs?.[0]?.job_id);
@@ -166,7 +176,6 @@ export function AllCandidatesList() {
   if (jobsLoading) {
     return <p className="text-center mt-10 h-screen">Loading jobs...</p>;
   }
-  console.log("candidatesByJob", jobs, selectedJobId);
 
   return (
     <main>
@@ -174,7 +183,6 @@ export function AllCandidatesList() {
         {!jobs?.length && (
           <section
             className={`flex flex-row justify-between items-center px-2 cursor-pointer
-           
                 : "bg-white/45 w-[155px] h-[42px] mb-1 rounded-lg"
             transition-all duration-300`}
           >
@@ -191,22 +199,28 @@ export function AllCandidatesList() {
             </div>
           </section>
         )}
-        {jobs?.map((job: Job) => (
-          <Card
-            key={job.job_id}
-            id={job.job_id}
-            title={job.title}
-            newCount={10}
-            skills={job.skills ?? []}
-            description={job.description ?? ""}
-            onClick={() => setSelectedJobId(job.job_id)}
-            isActive={selectedJobId === job.job_id}
-          />
-        ))}
+        {jobs?.map((job: Job) => {
+          const count =
+            pendingCounts.find((c) => c.job_id === job.job_id)?.pending_count ??
+            0;
+
+          return (
+            <Card
+              key={job.job_id}
+              id={job.job_id}
+              title={job.title}
+              newCount={count}
+              skills={job.skills ?? []}
+              description={job.description ?? ""}
+              onClick={() => setSelectedJobId(job.job_id)}
+              isActive={selectedJobId === job.job_id}
+            />
+          );
+        })}
       </div>
 
       <section
-        className={`max-w-[1416px] p-8 mx-auto bg-[#F9F7F5] min-h-[626px] relative 
+        className={`max-w-[1416px] p-8 mx-auto bg-[#F9F7F5] min-h-[526px] max-h-screen relative 
         ${selectedJobId == null ? "rounded-tr-lg rounded-b-lg" : "rounded-lg"}
         transition-all duration-300`}
       >
@@ -254,12 +268,12 @@ export function AllCandidatesList() {
           <GridViewContainer choosed={viewMode} setChosen={setViewMode} />
         </div>
         {!filteredCandidates.length && (
-          <div className="text-center mt-10 h-screen">
+          <div className="text-center mt-10 ">
             No candidates in{" "}
             {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} tabs
           </div>
         )}
-        {viewMode === 2 && filteredCandidates.length ? (
+        {viewMode === 2 ? (
           <CandidatesList
             candidatesByJob={filteredCandidates}
             selectedJobId={selectedJobId as string}

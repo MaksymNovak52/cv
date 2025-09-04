@@ -32,7 +32,7 @@ export const fetchAllJobs = async () => {
 export const fetchCandidatesByJob = async (
   jobId: string
 ): Promise<CandidateRow[]> => {
-  const { data, error } = await supabase.rpc("get_candidates_by_job_v3", {
+  const { data, error } = await supabase.rpc("get_candidates_by_job", {
     job_uuid: jobId,
   });
 
@@ -121,7 +121,7 @@ export interface CreateJobWithCandidateInput {
     highlights: string;
     title: string;
     location: string;
-    experience: number;
+    experience: string;
     deployment: string;
     clearance: string;
     salary: number;
@@ -153,7 +153,7 @@ export const createJobWithCandidate = async (
     _candidate_deployment: candidate.deployment ?? "",
     _candidate_clearance: candidate.clearance ?? "",
     _candidate_salary: candidate.salary,
-    opinion: candidate.opinion,
+    _opinion: candidate.opinion,
     _job_id: jobId,
     _job_title: jobTitle,
     _job_description: jobDescription,
@@ -170,7 +170,7 @@ export const createJobWithCandidate = async (
 
 export const deleteJobAndRelated = async (jobId: string) => {
   const { error } = await supabase.rpc("delete_job_with_relations", {
-    _job_id: jobId,
+    p_job: jobId,
   });
 
   if (error) throw new Error(error.message);
@@ -238,3 +238,22 @@ export const updateCandidateStatusForJob = async (
   });
   if (error) throw new Error(error.message);
 };
+
+export async function fetchPendingCandidatesByJob(
+  jobId: string
+): Promise<CandidateRow[]> {
+  const { data, error } = await supabase.rpc("get_pending_candidates_by_job", {
+    _job_id: jobId,
+  });
+
+  if (error) {
+    console.error("Error fetching pending candidates:", error);
+    throw error;
+  }
+  return data as CandidateRow[];
+}
+export async function fetchPendingCountsForAllJobs() {
+  const { data, error } = await supabase.rpc("get_pending_counts_for_all_jobs");
+  if (error) throw error;
+  return data as { job_id: string; pending_count: number }[];
+}

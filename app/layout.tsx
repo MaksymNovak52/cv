@@ -32,6 +32,10 @@ export default function RootLayout({
         className={`antialiased ${miriamLibre.className} ${ebGaramond.variable}`}
         style={{
           background: "linear-gradient(180deg, #E4D9CB 0%, #F9F9F9 27.7%)",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
+          backgroundSize: "cover",
+          minHeight: "100vh",
         }}
       >
         {children}

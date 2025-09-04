@@ -40,7 +40,7 @@ interface CandidateFormData {
   highlights: string;
   title: string;
   location: string;
-  experience: number | null;
+  experience: string | null;
   deployment: string;
   englishLevel: string;
   salary: number | null;

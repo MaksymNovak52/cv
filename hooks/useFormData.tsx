@@ -14,7 +14,7 @@ export const useFormData = () => {
     name: "",
     title: "",
     location: "",
-    experience: null,
+    experience: "",
     deployment: "",
     highlights: "",
     englishLevel: CANDIDATA_FORM_DATA.DEFAULT_ENGLISH_LEVEL,

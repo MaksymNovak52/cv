@@ -1,11 +1,11 @@
 "use client";
+import { pickAvatar } from "@/lib/avatar";
 import {
   useCounts,
   useToggleFavorite,
   useUpdateApplicationStatus,
 } from "@/queries/candidates";
 import { CandidateRow, Job } from "@/type";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -101,6 +101,7 @@ export function CandidateModal({
   };
   const handleReject = async (id: string) => {
     try {
+      if (rejectionReason.length < 1) return;
       await rejectStatus({
         applicationId: candidate.application_id,
         statusName: "Rejected",
@@ -135,12 +136,12 @@ export function CandidateModal({
     }
   };
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center backdrop-blur-md">
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center backdrop-blur-md overflow-hidden">
       <div className="bg-white w-[636px] h-[99%] rounded-md max-w-4xl max-h-screen relative flex flex-col">
         <div className="fixed  left-[28px] flex flex-col items-start top-[28px] text-[16px] text-white font-bold leading-[-0.16px] z-10">
           <span>{jobDetails.title}</span>
           <p className="text-[10px] text-[#CFCDCB] leading-[-0.1px] uppercase">
-            {data?.total_candidates} new candidates
+            {candidates?.length} new candidates
           </p>
         </div>
 
@@ -171,7 +172,11 @@ export function CandidateModal({
             />
           </svg>
         </div>
-        <div className="fixed -right-10 top-[5%]    min-w-[50 0px] w-[50px] flex items-end    min-h-[600px]">
+        <div
+          className={`fixed -right-10 top-[5%]    min-w-[50 0px] w-[50px] flex items-end    min-h-[600px] ${
+            candidates.length === 1 ? "hidden" : ""
+          }`}
+        >
           <div className="w-[20px] bg-white h-[600px]  rounded-xl relative  z-[10]"></div>
           <div className="w-[20px] bg-[#DDDEDF] h-[600px]  rounded-tl-xl relative  right-[8px] rotate-[-4deg] z-[9] top-4"></div>
           <div className="w-[20px] bg-[#B5B1AE] h-[600px]  rounded-tl-xl relative  right-[30px] rotate-[-5deg] z-[2] top-[30px]"></div>
@@ -192,7 +197,9 @@ export function CandidateModal({
           ))}
         </div>
         <span
-          className="fixed top-1/2 right-[350px] z-10 translate-x-1/2 cursor-pointer translate-y-1/2   "
+          className={`fixed top-1/2 right-[370px] z-10 translate-x-1/2 cursor-pointer translate-y-1/2   ${
+            candidates.length === 1 ? "hidden" : ""
+          }`}
           onClick={goToPrevious}
         >
           <svg
@@ -228,7 +235,9 @@ export function CandidateModal({
           </svg>
         </span>
         <span
-          className="fixed top-1/2 left-[300px] z-10 translate-x-1/2 cursor-pointer translate-y-1/2   "
+          className={`fixed top-1/2 left-[330px] z-10 translate-x-1/2 cursor-pointer translate-y-1/2  ${
+            candidates.length === 1 ? "hidden" : ""
+          }`}
           onClick={goToNext}
         >
           <svg
@@ -267,26 +276,32 @@ export function CandidateModal({
 
         <div className="flex-1 overflow-y-auto  pb-20">
           <div className="px-6 ">
-            {/* Fixed Profile Section */}
-            <div className="sticky top-0 bg-white z-5 pb-4 pt-6">
+            <div className="sticky top-0 bg-white z-10 pb-4 pt-6">
               <div className="flex flex-row items-center justify-between">
                 <div className="flex flex-row items-center">
                   <img
-                    src={`https://api.dicebear.com/8.x/pixel-art/svg?seed=${candidate.full_name}`}
+                    src={pickAvatar(candidate)}
                     alt="profile"
                     className="w-[64px] h-[64px] rounded-full object-cover"
                   />
-                  <div className="flex flex-col ml-3">
-                    <h3 className="text-xl font-semibold text-[#211C1A]">
+                  <div className="flex flex-col ml-3 ">
+                    <h3 className="text-[40px] font-medium text-[#211C1A] font-eb-garamond  leading-[36px] break-words ">
+                      {/* {candidate.full_name.length > 11
+                        ? candidate.full_name.slice(0, 11) + "..."
+                        : candidate.full_name} */}
                       {candidate.full_name}
                     </h3>
-                    <span className="text-white text-[8px] rounded-lg py-[5px] px-[6px] font-bold flex items-center justify-center bg-[#259A6D] w-[70px] h-[18px] mt-1">
-                      {candidate.status || "To interview"}
+                    <span className="text-white text-[8px] leading-[-0.08px] rounded-[4px]  py-[3px] px-[5px] font-bold flex items-center justify-center bg-[#259A6D]  w-auto max-w-[72px] mt-4">
+                      {candidate.status === "Pending"
+                        ? "New"
+                        : candidate.status === "Hold"
+                        ? "Not sure"
+                        : candidate.status || "To interview"}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-2 flex-col w-[220px] text-start">
+                <div className="flex items-start gap-2 flex-col w-1/2 text-start">
                   <p className="text-[#A6A4A3] text-[12px] text-start font-bold leading-[-0.12px]">
                     {candidate.current_title ||
                       "Multidisciplinary Designer & Artist, Interactive Design, 3D & Motion"}
@@ -338,14 +353,6 @@ export function CandidateModal({
                         </svg>
                       </div>
                     )}
-                    {candidate.linkedin_url && (
-                      <Image
-                        src="/linked.png"
-                        alt="linkedin"
-                        width={13}
-                        height={13}
-                      />
-                    )}
                   </div>
                 </div>
               </div>
@@ -355,8 +362,8 @@ export function CandidateModal({
             <div className="w-full flex flex-row gap-2 justify-between relative">
               <div className="w-[2px] h-[calc(100%+12px)] border-l border-dashed border-[#E5E5E5] absolute left-[126px] -top-[18px]"></div>
 
-              <div className="space-y-3 h-[300px]  ">
-                <div className="flex items-start gap-2 text-[12px] leading-[-0.12px] font-bold ">
+              <div className="space-y-3 h-[300px] ">
+                <div className="flex items-start gap-2 text-[12px] leading-[-0.12px] font-bold  w-[110px]">
                   <span className="pt-[2px]">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -373,7 +380,7 @@ export function CandidateModal({
                     </svg>
                   </span>
                   <div className="flex flex-col items-start">
-                    <span className="text-[#64605F]">Deployment:</span>
+                    <span className="text-[#64605F]">Notice period:</span>
                     <span className="text-[#211C1A]">
                       {candidate.deployment_status || "Available"}
                     </span>
@@ -395,10 +402,12 @@ export function CandidateModal({
                       />
                     </svg>
                   </span>
-                  <span className="text-[#64605F]">English:</span>
-                  <span className="text-[#211C1A]">
-                    {cleanClearanceStatus(candidate.clearance_status) || "B2"}
-                  </span>
+                  <div className="flex flex-row gap-[1px]">
+                    <span className="text-[#64605F]">English:</span>
+                    <span className="text-[#211C1A]">
+                      {cleanClearanceStatus(candidate.clearance_status) || "B2"}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex items-start gap-2 text-[12px] leading-[-0.12px] font-bold">
                   <span className="pt-[2px]">
@@ -442,7 +451,7 @@ export function CandidateModal({
                   <div className="flex flex-col items-start">
                     <span className="text-[#64605F]">Experience:</span>
                     <span className="text-gray-900">
-                      {candidate.experience_years || "3"} Years
+                      {candidate.experience_years || "3"}
                     </span>
                   </div>
                 </div>
@@ -487,23 +496,25 @@ export function CandidateModal({
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 bg-white border-t flex items-center justify-between border-[#E3E3E3] p-6 rounded-b-md">
+        <div className="absolute bottom-0 left-0 right-0 bg-white  flex items-center justify-between border-[#E3E3E3] p-6 rounded-b-md">
           <div className="text-left ">
-            <p className="text-2xl font-normal text-[#211C1A] leading-[21.6px]">
-              ${candidate.salary.toLocaleString()}
-              <span className="text-[12px] text-[#211C1A] font-bold">
+            <div className="flex flex-row">
+              <p className="text-2xl font-normal text-[#211C1A] leading-[21.6px] font-eb-garamond">
+                ${candidate.salary.toLocaleString()}
+              </p>
+              <span className="text-[12px] text-[#211C1A] font-bold mt-[6px]">
                 {" "}
-                /Year
+                /month
               </span>
-            </p>
+            </div>
             <p className="text-[12px] text-[#A6A4A3] font-bold">
               +Equity Package
             </p>
           </div>
           {isRejected && (
-            <div className="absolute bottom-0 right-0 bg-[#1C2831] w-[451px] h-[126px] p-[12px]  rounded-lg flex flex-col justify-center gap-2 ">
-              <h4 className="text-white text-[24px] font-normal leading-[21.6px]">
-                Make candidate matchesmore precise for you
+            <div className="absolute bottom-[9px] right-4 bg-[#1C2831] w-[451px] h-[126px] p-[12px]  rounded-lg flex flex-col justify-center gap-2 ">
+              <h4 className="text-white text-[24px] font-normal  font-eb-garamond leading-[21.6px] w-[270px]">
+                Make candidate matches more precise for you
               </h4>
               <div className="flex flex-row items-center gap-1">
                 <input
@@ -526,19 +537,19 @@ export function CandidateModal({
           )}
           <div className="flex items-center gap-1 justify-center">
             <button
-              className="flex items-center justify-center text-[14px] leading-[-0.14px] font-bold  bg-[#D3EBE2] w-[92px] h-[40px] rounded-md hover:bg-green-200 transition-colors "
+              className="flex items-center justify-center text-[14px] leading-[-0.14px] font-bold  bg-[#D3EBE2] w-[105px] h-[44px] rounded-md hover:bg-green-200 transition-colors "
               onClick={() => handleInterview(candidate.id)}
             >
               [A] Approve
             </button>
             <button
-              className="flex items-center justify-center text-[14px] leading-[-0.14px] font-bold  border border-[#E5E5E5] w-[92px] h-[40px] rounded-md hover:bg-gray-50 transition-colors "
+              className="flex items-center justify-center text-[14px] leading-[-0.14px] font-bold  border border-[#E5E5E5] w-[105px] h-[44px] rounded-md hover:bg-gray-50 transition-colors "
               onClick={() => handleHold(candidate.id)}
             >
               [H] Hold
             </button>
             <button
-              className="flex items-center justify-center text-[14px] leading-[-0.14px] font-bold  border border-[#E5E5E5] w-[92px] h-[40px] rounded-md hover:bg-gray-50 transition-colors "
+              className="flex items-center justify-center text-[14px] leading-[-0.14px] font-bold  border border-[#E5E5E5] w-[105px] h-[44px] rounded-md hover:bg-gray-50 transition-colors "
               onClick={() => setIsRejected(true)}
             >
               [R] Reject

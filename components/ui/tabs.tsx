@@ -21,29 +21,36 @@ export const CustomTabs = ({
     { id: "reject" as const, label: "Reject", count: counts.reject },
   ];
 
+  const activeIndex = tabs.findIndex((t) => t.id === activeTab);
+
   return (
     <div className="pt-2">
-      <div className="flex space-x-2 bg-[#F2F2F2] rounded-lg p-1 h-[40px] w-[380px]">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`relative h-[32px] min-w-[80px] px-3 text-[12px] font-semibold rounded-lg transition-all duration-300
-              ${
-                activeTab === tab.id
-                  ? "bg-white text-black"
-                  : "text-gray-600 hover:text-gray-800"
-              }`}
-          >
-            <span>{tab.label}</span>
-            {activeTab !== tab.id && tab.id != ("reject" as const) && (
-              <span className="absolute top-[4px] -right-3 w-[1px] h-[24px] bg-[#DADADA] rounded-full flex items-center justify-center text-white text-[8px]" />
-            )}
-            {activeTab === tab.id && (
-              <div className="absolute inset-0 bg-white rounded-lg -z-10 opacity-20" />
-            )}
-          </button>
-        ))}
+      <div className="bg-[#F2F2F2] rounded-lg p-1 h-[40px] w-[330px]">
+        <div className="flex h-full w-full">
+          {tabs.map((tab, i) => {
+            const isActive = activeTab === tab.id;
+            const hideDivider = isActive || i === activeIndex - 1;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={[
+                  "relative h-[32px] flex-1 basis-0 px-3 text-[12px] font-semibold rounded-lg transition-all duration-300",
+                  "before:content-[''] before:absolute before:top-1/2 before:-translate-y-1/2 before:right-0 before:h-[24px] before:w-px before:bg-[#DADADA] last:before:hidden",
+                  hideDivider ? "before:opacity-0" : "",
+                  isActive
+                    ? "bg-white text-black"
+                    : "text-gray-600 hover:text-gray-800",
+                ].join(" ")}
+              >
+                <span>{tab.label}</span>
+                {isActive && (
+                  <div className="absolute inset-0 bg-white rounded-lg -z-10 opacity-20" />
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
