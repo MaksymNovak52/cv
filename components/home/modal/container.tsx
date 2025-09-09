@@ -149,6 +149,7 @@ export function CandidateModal({
       onClose();
     }
   };
+
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center backdrop-blur-md overflow-hidden">
       <div className="bg-white mt-[120px] lg:mt-0  min-[2000px]:w-[1200px] w-[98%] lg:w-[636px] lg:h-[99%] rounded-md max-w-4xl max-h-screen relative flex flex-col">
@@ -186,15 +187,15 @@ export function CandidateModal({
             />
           </svg>
         </div>
-        <div
-          className={`fixed -right-10 top-[5%]   hidden lg:flex  min-w-[50 0px] w-[50px]  items-end    min-h-[600px] ${
-            candidates.length === 1 ? "hidden" : ""
-          }`}
-        >
-          <div className="w-[20px] bg-white h-[600px]  rounded-xl relative  z-[10]"></div>
-          <div className="w-[20px] bg-[#DDDEDF] h-[600px]  rounded-tl-xl relative  right-[8px] rotate-[-4deg] z-[9] top-4"></div>
-          <div className="w-[20px] bg-[#B5B1AE] h-[600px]  rounded-tl-xl relative  right-[30px] rotate-[-5deg] z-[2] top-[30px]"></div>
-        </div>
+        {candidates.length >= 2 && (
+          <div
+            className={`fixed -right-10 top-[5%]   hidden lg:flex  min-w-[50 0px] w-[50px]  items-end    min-h-[600px] `}
+          >
+            <div className="w-[20px] bg-white h-[600px]  rounded-xl relative  z-[10]"></div>
+            <div className="w-[20px] bg-[#DDDEDF] h-[600px]  rounded-tl-xl relative  right-[8px] rotate-[-4deg] z-[9] top-4"></div>
+            <div className="w-[20px] bg-[#B5B1AE] h-[600px]  rounded-tl-xl relative  right-[30px] rotate-[-5deg] z-[2] top-[30px]"></div>
+          </div>
+        )}
         <div className="fixed hidden lg:flex left-[32px]  flex-col items-start bottom-[32px] text-[16px] text-white font-bold leading-[-0.16px] z-10">
           {candidates?.map((candidateItem) => (
             <p
