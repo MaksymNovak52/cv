@@ -98,7 +98,7 @@ export function SignInContainer() {
 
       <form
         onSubmit={onSubmit}
-        className="flex flex-col w-[464px] h-[430px] mx-auto p-6 bg-white shadow-lg rounded-xl absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] py-[65px]"
+        className="flex flex-col w-[377px] sm:w-[400px] lg:w-[464px] h-[430px] mx-auto p-6  bg-white shadow-lg rounded-xl absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] py-[65px]"
         noValidate
       >
         <div className="w-[330px] mx-auto">
@@ -335,7 +335,7 @@ export function SignInContainer() {
         )}
       </form>
 
-      <p className="bottom-[5%] left-1/2 translate-x-[-50%] translate-y-[-50%] absolute text-white/50 text-[10px] leading-[-0.1px] font-bold max-w-[350px] text-center">
+      <p className="bottom-[0%]  sm:bottom-[5%] left-1/2 translate-x-[-50%] translate-y-[-50%] absolute text-white/50 text-[10px] leading-[-0.1px] font-bold max-w-[350px] text-center">
         Unlisted talenе. Confidential roles.
         <br />
         We operate off-grid — sourcing minds too sharp for the spotlight

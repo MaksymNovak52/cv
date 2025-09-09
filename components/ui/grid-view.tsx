@@ -12,10 +12,9 @@ export function GridViewContainer({
   const [isHoveredSecond, setIsHoveredSecond] = useState(false);
 
   return (
-    <div className="flex flex-row gap-2 items-center text-[#211C1A] leading-[-0.12px] text-[12px] font-bold">
+    <div className=" hidden sm:flex flex-row gap-2 items-center text-[#211C1A] leading-[-0.12px] text-[12px] font-bold">
       <span>View:</span>
 
-      {/* 1) List view */}
       <button
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

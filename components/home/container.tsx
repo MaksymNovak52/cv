@@ -1,4 +1,5 @@
 "use client";
+import { useIsMobile } from "@/hooks";
 import { useCandidatesContext } from "@/provider";
 import {
   useCandidatesByJob,
@@ -13,7 +14,7 @@ import { CustomTabs, Dotbage, GridViewContainer } from "../ui";
 import { CandidatesList } from "./list";
 import { CandidateModal } from "./modal";
 import { CandidatesTable } from "./table";
-import { Card } from "./vacantion-card";
+import { Card, JobOption, MobileJobSelect } from "./vacantion-card";
 
 type TabKey = "new" | "interview" | "not-sure" | "reject";
 
@@ -128,7 +129,8 @@ export function AllCandidatesList() {
   );
   const { data: favoritesCount } = useFavoritesCount(selectedJobId as string);
   const { data: pendingCounts = [] } = usePendingCountsForAllJobs();
-
+  const isMobile = useIsMobile(450);
+  const effectiveViewMode = isMobile ? 2 : viewMode;
   const counts = useMemo(() => {
     let c = { new: 0, interview: 0, notSure: 0, reject: 0 };
     for (const cand of candidatesByJob) {
@@ -176,6 +178,13 @@ export function AllCandidatesList() {
   if (jobsLoading) {
     return <p className="text-center mt-10 h-screen">Loading jobs...</p>;
   }
+  const options: JobOption[] = (jobs ?? []).map((job: Job) => ({
+    id: job.job_id,
+    title: job.title,
+    newCount:
+      pendingCounts.find((c) => c.job_id === job.job_id)?.pending_count ?? 0,
+    dotClass: "bg-[#259A6D]",
+  }));
 
   return (
     <main>
@@ -217,33 +226,45 @@ export function AllCandidatesList() {
             />
           );
         })}
+        <MobileJobSelect
+          options={options}
+          value={selectedJobId as string}
+          onChange={setSelectedJobId}
+        />
       </div>
 
       <section
-        className={`max-w-[1416px] p-8 mx-auto bg-[#F9F7F5] min-h-[526px] max-h-screen relative 
-        ${selectedJobId == null ? "rounded-tr-lg rounded-b-lg" : "rounded-lg"}
+        className={`max-w-[1416px] p-8 mx-auto bg-[#F9F7F5] min-h-[526px] lg:max-h-screen relative 
+        ${
+          selectedJobId == null
+            ? "rounded-tr-lg rounded-b-lg"
+            : "rounded-b-lg rounded-tr-lg"
+        }
         transition-all duration-300`}
       >
-        <div className="w-full flex flex-row items-start justify-between">
+        <div className="w-full flex flex-col lg:flex-row items-start justify-between">
           <span className="text-[#211C1A] text-[12px] font-semibold max-w-[490px]">
             {jobDetails?.description ?? "No description"}
           </span>
 
           <div className="flex flex-row flex-wrap w-[330px] gap-2">
-            {jobDetails?.skills?.map((tag: string, i: number) => (
-              <Dotbage tag={tag} key={i} />
-            ))}
+            {jobDetails &&
+              jobDetails?.skills?.map((tag: string, i: number) => (
+                <Dotbage tag={tag} key={i} />
+              ))}
           </div>
 
-          <div className="flex flex-row items-center gap-2">
-            <button className="w-[146px] h-[40px] rounded-[4px] border border-[#E0DFDD] text-[14px] font-semibold text-[#211C1A] flex items-center justify-center">
-              [{favoritesCount}] Favorites
+          <div className="flex flex-row items-start  mt-10 sm:mt-0 justify-start gap-2 ">
+            <button className="w-[104px] lg:w-[146px] h-[40px] gap-1 rounded-[4px] border flex items-center justify-center border-[#E0DFDD] text-[14px] font-semibold text-[#211C1A] ">
+              <p className="hidden lg:block"> [{favoritesCount}]</p>
+              Favorites
             </button>
             <button
-              className="w-[129px] h-[40px] bg-[#597D9B] text-[14px] font-bold rounded-[4px]"
+              className=" w-[104px] lg:w-[129px] h-[40px] flex items-center justify-center gap-1 bg-[#597D9B] text-[14px] font-bold rounded-[4px] text-white"
               onClick={() => setIsAddModalOpen(true)}
             >
-              [V] Vacancy
+              <p className="hidden lg:block">[V]</p>
+              Vacancy
             </button>
           </div>
         </div>
@@ -273,7 +294,7 @@ export function AllCandidatesList() {
             {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} tabs
           </div>
         )}
-        {viewMode === 2 ? (
+        {effectiveViewMode === 2 ? (
           <CandidatesList
             candidatesByJob={filteredCandidates}
             selectedJobId={selectedJobId as string}
@@ -287,7 +308,7 @@ export function AllCandidatesList() {
             handleCandidateClick={handleCandidateClick}
           />
         )}
-        {filteredCandidates.length > 0 && viewMode === 1 && (
+        {filteredCandidates.length > 0 && effectiveViewMode === 1 && (
           <VisibleCandidatesTracker
             totalCandidates={filteredCandidates.length}
           />

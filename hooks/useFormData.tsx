@@ -23,6 +23,7 @@ export const useFormData = () => {
     linkedinUrl: "",
     skills: "",
     opinion: "",
+    gender: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -54,6 +55,7 @@ export const useFormData = () => {
       highlights: "",
       skills: "",
       opinion: "",
+      gender: "",
     });
     setErrors({});
   };

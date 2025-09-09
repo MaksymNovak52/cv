@@ -1,5 +1,6 @@
 import { useDeleteJob } from "@/queries/candidates";
 import Image from "next/image";
+import { useMemo } from "react";
 
 interface CardProps {
   title: string;
@@ -32,7 +33,7 @@ export const Card = ({
       onClick={onClick}
       className={`
         relative cursor-pointer transition-all duration-300
-        w-[263px] h-[51px] rounded-t-lg
+        w-[263px] h-[51px] rounded-t-lg hidden lg:block
       `}
     >
       <div
@@ -80,3 +81,99 @@ export const Card = ({
     </section>
   );
 };
+export interface JobOption {
+  id: string;
+  title: string;
+  newCount: number;
+  dotClass?: string;
+}
+
+export function MobileJobSelect({
+  options,
+  value,
+  onChange,
+}: {
+  options: JobOption[];
+  value: string;
+  onChange: (id: string) => void;
+}) {
+  const selected = useMemo(
+    () => options.find((o) => o.id === value) ?? options[0],
+    [options, value]
+  );
+
+  return (
+    <div
+      className="
+        hidden max-[450px]:flex
+        items-center justify-between
+        w-[98%] h-[48px] rounded-[10px] bg-white shadow-sm px-3
+        border border-[#ECEAE8] relative mx-auto mb-[6px]
+      "
+    >
+      <span
+        className={`w-[8px] h-[8px] rounded-full mr-2 ${
+          selected?.dotClass ?? "bg-[#259A6D]"
+        }`}
+        aria-hidden
+      />
+
+      <select
+        value={selected?.id ?? ""}
+        onChange={(e) => onChange(e.target.value)}
+        className="
+          appearance-none bg-transparent outline-none cursor-pointer
+          text-[#211C1A] text-[14px] font-semibold truncate
+          pr-[110px]  /* місце під бейдж, розділювач і стрілку */
+          flex-1
+        "
+        aria-label="Select job"
+      >
+        {options.map((o) => (
+          <option key={o.id} value={o.id}>
+            {o.title}
+          </option>
+        ))}
+      </select>
+
+      {selected?.newCount ? (
+        <span
+          className="
+            absolute right-8 top-1/2 -translate-y-1/2
+            h-[24px] px-2 bg-[#2D2C2A] rounded-md
+            text-[10px] font-bold uppercase text-white
+            inline-flex items-center justify-center mr-[16px]
+          "
+        >
+          <span className="tabular-nums">{selected.newCount} NEW</span>
+          <Image
+            src="/fire.png"
+            alt="new"
+            width={12}
+            height={12}
+            className="ml-2"
+          />
+        </span>
+      ) : null}
+
+      <span className="absolute right-[36px] top-1/2 -translate-y-1/2 w-px h-6 bg-[#E6E2DF]" />
+
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none"
+        aria-hidden="true"
+      >
+        <path
+          d="M6 9l6 6 6-6"
+          stroke="#211C1A"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+  );
+}

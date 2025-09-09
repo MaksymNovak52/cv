@@ -38,7 +38,7 @@ const StepIndicator = ({ currentStep }: { currentStep: number }) => {
 
 const CloseButton = ({ onClose }: { onClose: () => void }) => (
   <div
-    className="fixed right-[32px] cursor-pointer flex flex-col items-start top-[28px] text-[16px] text-white font-bold leading-[-0.16px] z-10"
+    className="fixed lg:right-[32px] lg:top-[28px]  right-[20px] top-[10px] cursor-pointer flex flex-col items-start text-[16px] text-white font-bold leading-[-0.16px] z-10"
     onClick={onClose}
   >
     <svg
@@ -85,8 +85,8 @@ const FormField = ({
   const finalError = error || (showRequired ? "Required" : "");
 
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between mb-1"></div>
+    <div className="w-full  mx-auto   ">
+      <div className="flex items-center justify-center mb-1"></div>
       {children}
     </div>
   );
@@ -136,7 +136,7 @@ const Input = ({
         placeholder={placeholder}
         onChange={onChange}
         aria-invalid={showError}
-        className={`w-[330px] border rounded-md px-3 py-2 outline-none text-[12px] font-bold focus:placeholder-[#4D4D4D]/50 ${
+        className={` w-[90%] lg:w-[330px] border rounded-md px-3 py-2 outline-none text-[12px] font-bold focus:placeholder-[#4D4D4D]/50 ${
           showError
             ? "border-[#FF3636] text-[#FF3636] placeholder-[#FF3636]"
             : "border-[#CCCCCC] text-[#4D4D4D]/90 placeholder-[#4D4D4D]/90"
@@ -168,7 +168,7 @@ const TextArea = ({
 
   return (
     <>
-      <div className="flex flex-row items-center justify-between w-full">
+      <div className="flex flex-row items-center justify-between w-[90%] lg:w-full">
         <p className="text-[10px] font-bold uppercase text-[#BCBBBA]">
           [{label}] {isRequired && "*"}
         </p>
@@ -181,7 +181,7 @@ const TextArea = ({
         value={value}
         onChange={onChange}
         aria-invalid={showError}
-        className={`min-w-[330px] w-full ${height} max-[1400px]:h-[104px] border resize-none rounded-md px-3 py-2 outline-none text-[12px] font-bold focus:placeholder-[#4D4D4D]/50 ${
+        className={`w-[90%] lg:min-w-[330px] sm:w-full ${height} max-[1400px]:h-[104px] border resize-none rounded-md px-3 py-2 outline-none text-[12px] font-bold focus:placeholder-[#4D4D4D]/50 ${
           showError
             ? "border-[#FF3636] text-[#FF3636] placeholder-[#FF3636]"
             : "border-[#CCCCCC] text-[#4D4D4D]/90 placeholder-[#4D4D4D]/90"
@@ -224,7 +224,7 @@ const Select = ({
         </p>
       </div>
       <div
-        className={`w-[330px] border outline-none rounded-md px-3 py-2 text-[10px] font-bold ${
+        className={` w-[90%] lg:w-[330px] border outline-none rounded-md px-3 py-2 text-[10px] font-bold ${
           showError
             ? "border-[#FF3636] text-[#FF3636]"
             : "border-[#CCCCCC] text-[#4D4D4D]/90"
@@ -234,7 +234,7 @@ const Select = ({
           value={value}
           onChange={onChange}
           aria-invalid={showError}
-          className="w-[305px]"
+          className=" w-[99%] lg:w-[305px]"
         >
           {placeholder && (
             <option value="" className="text-[#4D4D4D]/60">

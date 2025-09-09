@@ -114,6 +114,26 @@ const getCandidateFormFields = (
     isEmpty: !candidateData.englishLevel?.trim(),
   },
   {
+    label: "Gender",
+    component: (
+      <Select
+        value={candidateData.gender}
+        onChange={(e) => updateCandidateData({ gender: e.target.value })}
+        options={CANDIDATA_FORM_DATA.GENDERS.map((g) => ({
+          value: g,
+          label: g,
+        }))}
+        className="text-[12px]"
+        placeholder="Select Gender"
+        isRequired
+        showValidation={showValidationErrors}
+        label="Gender"
+      />
+    ),
+    isRequired: true,
+    isEmpty: !candidateData.gender?.trim(),
+  },
+  {
     label: "Salary expected, in $usd",
     component: (
       <Input
@@ -132,20 +152,6 @@ const getCandidateFormFields = (
     isEmpty: candidateData.salary === null,
   },
   {
-    label: "CV URL",
-    component: (
-      <Input
-        placeholder="CV URL"
-        value={candidateData.linkedinUrl}
-        onChange={(e) => updateCandidateData({ linkedinUrl: e.target.value })}
-        showValidation={showValidationErrors}
-      />
-    ),
-    error: errors.linkedin,
-    isRequired: false,
-    isEmpty: !candidateData.linkedinUrl?.trim(),
-  },
-  {
     label: "Portfolio URL",
     component: (
       <Input
@@ -160,6 +166,20 @@ const getCandidateFormFields = (
     error: errors.portfolio,
     isRequired: true,
     isEmpty: !candidateData.portfolioUrl?.trim(),
+  },
+  {
+    label: "CV URL",
+    component: (
+      <Input
+        placeholder="CV URL"
+        value={candidateData.linkedinUrl}
+        onChange={(e) => updateCandidateData({ linkedinUrl: e.target.value })}
+        showValidation={showValidationErrors}
+      />
+    ),
+    error: errors.linkedin,
+    isRequired: false,
+    isEmpty: !candidateData.linkedinUrl?.trim(),
   },
 ];
 
@@ -207,7 +227,8 @@ export function CreateJobCandidateModal({
       !candidateData.highlights?.trim() ||
       !candidateData.deployment?.trim() ||
       !candidateData.portfolioUrl?.trim() ||
-      !candidateData.skills?.trim()
+      !candidateData.skills?.trim() ||
+      !candidateData.gender?.trim()
     ) {
       return false;
     }
@@ -288,6 +309,7 @@ export function CreateJobCandidateModal({
         highlights: candidateData.highlights || "",
         opinion: candidateData.opinion || "",
         requirements: candidateData.skills || "",
+        gender: candidateData.gender || "",
       },
       skills: skillsArray,
       ...(jobData.selectedJobId
@@ -334,30 +356,31 @@ export function CreateJobCandidateModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 box-border  overflow-hidden  h-screen">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center  justify-center z-50 box-border  overflow-hidden   lg: h-screen">
       <div
         className={`bg-white rounded-xl shadow-lg   ${
           step === CANDIDATA_FORM_DATA.STEPS.CANDIDATE_INFO &&
-          "w-full max-w-[751px] h-[98%] max-h-[801px] min-[1200px]:max-h-max px-[39px] py-[28px]"
+          "w-[360px] lg:w-full max-w-[751px]   lg:h-[99%] overflow-y-scroll lg:overflow-hidden lg:max-h-[801px] min-[1200px]:max-h-max px-[39px] py-[28px]"
         }
         ${
           step === CANDIDATA_FORM_DATA.STEPS.JOB_SELECTION &&
-          "w-[464px] h-[537px] pt-[28px] px-[67px]"
+          " w-[360px] lg:w-[464px] h-[537px] pt-[28px] px-[50px] lg:px-[67px]"
         }
         ${
-          step === CANDIDATA_FORM_DATA.STEPS.RM_OPINION && "pt-[28px] w-[464px]"
+          step === CANDIDATA_FORM_DATA.STEPS.RM_OPINION &&
+          "pt-[28px] w-[360px] lg:w-[464px]"
         }`}
       >
         <CloseButton onClose={() => setOpen(false)} />
         <StepIndicator currentStep={step} />
 
         {step === CANDIDATA_FORM_DATA.STEPS.JOB_SELECTION && (
-          <div className="space-y-2">
-            <h5 className="text-[40px] leading-[-0.14px] w-full text-center pt-10 font-eb-garamond">
+          <div className="space-y-2 ">
+            <h5 className="text-[40px] leading-[-0.14px]  text-center pt-10 font-eb-garamond lg:w-full w-[70%] mx-auto">
               Select or Create Job
             </h5>
 
-            <div className="flex flex-col justify-center items-center flex-1 w-[330px] mx-auto gap-1">
+            <div className="flex flex-col justify-center items-center flex-1 w-[280px] lg:w-[330px]  mx-auto gap-1">
               <FormField
                 label={isCreatingNewJob ? "New Vacancy" : "Existing Vacancy"}
                 isRequired
@@ -369,8 +392,8 @@ export function CreateJobCandidateModal({
                 showValidation={showJobValidation}
               >
                 {!isCreatingNewJob ? (
-                  <div className="flex flex-col gap-2 w-full">
-                    <div className="max-h-[280px] overflow-auto pr-1 space-y-2">
+                  <div className="flex flex-col gap-2 w-full  ">
+                    <div className="max-h-[160px] overflow-auto   pr-1 space-y-2">
                       {(jobs ?? []).length === 0 && (
                         <div className="text-xs text-[#666] italic">
                           No vacancies yet.
@@ -394,7 +417,7 @@ export function CreateJobCandidateModal({
                                 updateJobData({ selectedJobId: job.job_id });
                               }
                             }}
-                            className={`w-[330px] h-[42px] border rounded-md flex items-center justify-between px-[14px] cursor-pointer transition
+                            className={`w-[90%] lg:w-[330px] h-[42px] border rounded-md flex items-center justify-between px-[14px] cursor-pointer transition
                              bg-[#FAFAFA] border-[#F0F0F0] hover:bg-[#eaeaea]`}
                           >
                             <div className="flex flex-row gap-2 items-center">
@@ -448,7 +471,7 @@ export function CreateJobCandidateModal({
                     <button
                       type="button"
                       onClick={enterCreateMode}
-                      className="w-[330px] h-[42px] flex items-center justify-center rounded-md mt-[5px] border border-dashed border-[#CFCFCF] text-[#211C1A] font-bold text-[14px] leading-[-0.14px] hover:bg-[#fafafa] transition"
+                      className="w-[90%] lg:w-[330px] h-[42px] flex items-center justify-center rounded-md mt-[5px] border border-dashed border-[#CFCFCF] text-[#211C1A] font-bold text-[14px] leading-[-0.14px] hover:bg-[#fafafa] transition"
                     >
                       + Create new
                     </button>
@@ -472,7 +495,7 @@ export function CreateJobCandidateModal({
                           onChange={(e) =>
                             updateJobData({ title: e.target.value })
                           }
-                          className="w-[330px]"
+                          className="w-[90%] lg:w-[330px]"
                           isRequired
                           showValidation={showJobValidation}
                         />
@@ -500,7 +523,7 @@ export function CreateJobCandidateModal({
                 )}
               </FormField>
 
-              <div className="flex justify-between mt-[90px] w-full ">
+              <div className="flex justify-between mt-[20px] lg:mt-[90px] w-full ">
                 {isCreatingNewJob && (
                   <button
                     type="button"
@@ -535,7 +558,7 @@ export function CreateJobCandidateModal({
                 <button
                   onClick={handleNextToCandidateInfo}
                   className={`px-4 py-2 bg-[#242537] text-white rounded-md ${
-                    isCreatingNewJob ? "w-[167px]" : "w-[330px]"
+                    isCreatingNewJob ? "w-[167px]" : "w-[90%] lg:w-[330px]"
                   }`}
                 >
                   Next
@@ -546,13 +569,13 @@ export function CreateJobCandidateModal({
         )}
 
         {step === CANDIDATA_FORM_DATA.STEPS.CANDIDATE_INFO && (
-          <div className="flex flex-col gap-0 ">
+          <div className="flex flex-col gap-0  ">
             <div className=" h-[540px]  min-[1600px]:h-[600px] overflow-y-scroll">
               <h5 className="text-[40px] w-full text-center  font-medium text-[#211C1A] font-eb-garamond">
                 Candidate Info
               </h5>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2 w-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2 w-full  pl-6 lg:pl-0">
                 {candidateFormFields.map((field, index) => (
                   <FormField
                     key={index}
@@ -566,34 +589,36 @@ export function CreateJobCandidateModal({
                   </FormField>
                 ))}
               </div>
-
-              <FormField label="Highlights">
-                <TextArea
-                  placeholder="Key achievements, notable projects, impact delivered"
-                  value={candidateData.highlights}
-                  onChange={(e) =>
-                    updateCandidateData({ highlights: e.target.value })
-                  }
-                  isRequired
-                  showValidation={showValidationErrors}
-                  label="Highlights"
-                />
-              </FormField>
-
-              <FormField label="requirements">
-                <TextArea
-                  placeholder="List key requirements met (experience, shipped apps, integrations, teamwork)"
-                  value={candidateData.skills}
-                  onChange={(e) =>
-                    updateCandidateData({ skills: e.target.value })
-                  }
-                  isRequired
-                  showValidation={showValidationErrors}
-                  label="requirements"
-                />
-              </FormField>
+              <div className="  pl-6 lg:pl-0">
+                <FormField label="Highlights">
+                  <TextArea
+                    placeholder="Key achievements, notable projects, impact delivered"
+                    value={candidateData.highlights}
+                    onChange={(e) =>
+                      updateCandidateData({ highlights: e.target.value })
+                    }
+                    isRequired
+                    showValidation={showValidationErrors}
+                    label="Highlights"
+                  />
+                </FormField>
+              </div>
+              <div className="  pl-6 lg:pl-0">
+                <FormField label="requirements">
+                  <TextArea
+                    placeholder="List key requirements met (experience, shipped apps, integrations, teamwork)"
+                    value={candidateData.skills}
+                    onChange={(e) =>
+                      updateCandidateData({ skills: e.target.value })
+                    }
+                    isRequired
+                    showValidation={showValidationErrors}
+                    label="Requirements met"
+                  />
+                </FormField>
+              </div>
             </div>
-            <div className="flex justify-between mt-4">
+            <div className="flex justify-between  mt-2 lg:mt-4">
               <button
                 onClick={() => {
                   setStep(CANDIDATA_FORM_DATA.STEPS.JOB_SELECTION);
@@ -637,12 +662,12 @@ export function CreateJobCandidateModal({
         )}
 
         {step === CANDIDATA_FORM_DATA.STEPS.RM_OPINION && (
-          <div className="space-y-2 w-[464px] h-[500px]">
+          <div className="space-y-2 w-[300px] lg:w-[464px]  h-[500px] mx-auto ">
             <h5 className="text-[40px] leading-[-0.14px] w-full text-center pt-4">
               RM opinion
             </h5>
 
-            <div className="flex flex-col justify-center items-center flex-1 w-[330px] mx-auto gap-1">
+            <div className="flex flex-col justify-center items-center flex-1   w-[300px] pl-6 lg:pl-0 lg:w-[330px] mx-auto gap-1">
               <FormField
                 label="RM opinion"
                 isRequired
@@ -662,7 +687,7 @@ export function CreateJobCandidateModal({
                 />
               </FormField>
 
-              <div className="flex justify-between mt-2 w-full">
+              <div className="flex justify-between mt-4 w-full">
                 <button
                   onClick={() =>
                     setStep(CANDIDATA_FORM_DATA.STEPS.CANDIDATE_INFO)

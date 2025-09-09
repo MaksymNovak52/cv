@@ -1,7 +1,7 @@
 "use client";
 import { useCandidatesContext } from "@/provider";
 import { useCounts } from "@/queries/candidates";
-import { Bell, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import Image from "next/image";
 export function HeaderContainer({
   setIsAddModalOpen,
@@ -12,9 +12,9 @@ export function HeaderContainer({
   const { data, isLoading } = useCounts();
 
   return (
-    <header className="py-[20px] px-[32px] " style={{}}>
+    <header className="py-[20px] px-[15px] lg:px-[32px] " style={{}}>
       <div className="max-w-[1416px] flex justify-between mx-auto">
-        <section className="flex flex-row gap-3 items-center">
+        <section className="flex flex-row gap-2 lg:gap-3 items-center">
           <Image src="/logo.png" alt="logo" width={45} height={32} />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -52,21 +52,23 @@ export function HeaderContainer({
               />
             </svg>
             <div className="flex flex-col items-start gap">
-              <h3 className="text-[#211C1A] text-base font-bold">
+              <h3 className="text-[#211C1A] text-[14px] lg:text-base font-bold">
                 Nexus Protocol
               </h3>
-              <div className="flex flex-row items-center gap-2 text-[#857F78] text-[10px] font-bold uppercase">
+              <div className="flex flex-row  items-center gap-2 text-[#857F78] text-[10px] font-bold uppercase">
                 <p>{data?.total_candidates} new candidates</p>
                 <p>/</p>
-
-                <p>{data?.total_jobs} position open</p>
+                <p className="block lg:hidden">{data?.total_jobs} position</p>
+                <p className="hidden lg:block">
+                  {data?.total_jobs} position open
+                </p>
               </div>
             </div>
           </div>
         </section>
         <section className="flex flex-row gap-[6px]">
           <span
-            className="w-[146px] cursor-pointer h-[40px] rounded-[4px]  blur-[ 20px] text-[14px] font-semibold leading-[-0.14px] text-[#211C1A] flex items-center justify-center"
+            className=" hidden lg:flex w-[146px] cursor-pointer h-[40px] rounded-[4px]  blur-[ 20px] text-[14px] font-semibold leading-[-0.14px] text-[#211C1A]  items-center justify-center"
             style={{
               background: "rgba(0, 0, 0, 0.04)",
             }}
@@ -75,12 +77,13 @@ export function HeaderContainer({
             [ <Plus size={18} color="#000000" /> ] Add Candidate
           </span>
           <span
-            className="w-[146px] h-[40px] rounded-[4px] cursor-pointer blur-[ 20px] text-[14px] font-semibold leading-[-0.14px] text-[#211C1A] flex items-center justify-center"
+            className=" flex lg:hidden cursor-pointer h-[32px] sm:h-[40px] sm:px-[20px] px-[12px] py-[10px] rounded-[4px]  blur-[ 20px] text-[14px] font-semibold leading-[-0.14px] text-[#211C1A]  items-center justify-center"
             style={{
               background: "rgba(0, 0, 0, 0.04)",
             }}
+            onClick={() => setIsAddModalOpen(true)}
           >
-            [ <Bell size={18} color="#000000" /> ] Notifications
+            [ <Plus size={18} color="#000000" /> ]
           </span>
         </section>
       </div>

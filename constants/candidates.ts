@@ -8,5 +8,6 @@ const CANDIDATA_FORM_DATA = {
   },
   ENGLISH_LEVELS: ["A1", "A2", "B1", "B2", "C1", "C2"],
   URL_REGEX: /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/\S*)?$/,
+  GENDERS: ["Male", "Female"],
 } as const;
 export { CANDIDATA_FORM_DATA };

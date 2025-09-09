@@ -1,4 +1,5 @@
 export function Dotbage({ tag, bg }: { tag: string; bg?: string }) {
+  if (!tag) return null;
   return (
     <span
       className={`text-[#000000] text-[12px] leading-[-0.12px] px-[8px] py-1 ${

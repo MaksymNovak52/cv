@@ -1,8 +1,6 @@
 "use client";
-import {
-  useRemoveCandidateFromJob,
-  useToggleFavorite,
-} from "@/queries/candidates";
+import { truncateWords } from "@/lib/text";
+import { useToggleFavorite } from "@/queries/candidates";
 import { CandidateRow } from "@/type";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -36,7 +34,7 @@ function VisibleCandidatesTracker({
         setVisibleCount(visibleCardsRef.current.size);
       },
       {
-        threshold: 0.5, // 50% видимості
+        threshold: 0.5,
         rootMargin: "0px",
       }
     );
@@ -89,15 +87,6 @@ export function CandidatesList({
   const { mutate: toggleFav } = useToggleFavorite(selectedJobId);
   const [selectedCandidate, setSelectedCandidate] =
     useState<CandidateRow | null>(null);
-  const { mutate: removeCandidate, isError } = useRemoveCandidateFromJob();
-
-  const handleReject = (candidate: CandidateRow, e: React.MouseEvent) => {
-    e.preventDefault();
-    removeCandidate({
-      jobId: selectedJobId,
-      candidateId: candidate.id,
-    });
-  };
 
   return (
     <>
@@ -107,7 +96,7 @@ export function CandidatesList({
             key={candidate.id}
             data-candidate-card
             data-card-index={index}
-            className="flex flex-col relative w-[334px] p-[20px] bg-white rounded-[6px] border border-[#F5F5F5] cursor-pointer hover:shadow-md transition-shadow"
+            className="flex flex-col relative  lg:w-[334px] p-[20px] bg-white rounded-[6px] border border-[#F5F5F5] cursor-pointer hover:shadow-md transition-shadow"
             onClick={() => handleCandidateClick(candidate)}
           >
             <button
@@ -270,27 +259,85 @@ export function CandidatesList({
                   +Equity Package
                 </p>
               </div>
-
-              <div className="flex items-center gap-2 text-sm text-[#211C1A] font-semibold ">
-                <button
-                  className="flex items-center justify-center bg-[#D3EBE2] w-[106px] h-[40px] rounded-md hover:bg-green-200 transition-colors "
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  [A] Approve
-                </button>
-                <button
-                  className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors "
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  [H] Hold
-                </button>
-                <button
-                  className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors "
-                  onClick={(e) => handleReject(candidate, e)}
-                >
-                  [R] Reject
-                </button>
-              </div>
+              {candidate.rejection_reason ? (
+                <div className="flex items-center  w-full justify-between text-sm text-[#211C1A]">
+                  <div className="flex flex-row items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="35"
+                      height="35"
+                      viewBox="0 0 35 35"
+                      fill="none"
+                    >
+                      <g filter="url(#filter0_d_416_3770)">
+                        <path
+                          d="M17.5 10C16.0166 10 14.5666 10.4399 13.3332 11.264C12.0999 12.0881 11.1386 13.2594 10.5709 14.6299C10.0032 16.0003 9.85472 17.5083 10.1441 18.9632C10.4335 20.418 11.1478 21.7544 12.1967 22.8033C13.2456 23.8522 14.582 24.5665 16.0368 24.8559C17.4917 25.1453 18.9997 24.9967 20.3701 24.4291C21.7406 23.8614 22.9119 22.9001 23.736 21.6668C24.5601 20.4334 25 18.9834 25 17.5C24.9977 15.5116 24.2068 13.6053 22.8008 12.1992C21.3947 10.7932 19.4884 10.0023 17.5 10ZM20.2156 19.3998C20.2693 19.4533 20.3118 19.5169 20.3409 19.5869C20.37 19.657 20.3849 19.732 20.385 19.8078C20.385 19.8836 20.3701 19.9587 20.3411 20.0287C20.3121 20.0988 20.2696 20.1624 20.216 20.216C20.1624 20.2696 20.0988 20.3121 20.0287 20.3411C19.9587 20.3701 19.8836 20.385 19.8078 20.385C19.732 20.3849 19.657 20.37 19.5869 20.3409C19.5169 20.3118 19.4533 20.2693 19.3998 20.2156L17.5 18.3158L15.6002 20.2156C15.492 20.3236 15.3453 20.3842 15.1924 20.3841C15.0396 20.384 14.8929 20.3233 14.7848 20.2152C14.6767 20.1071 14.616 19.9604 14.6159 19.8076C14.6158 19.6547 14.6764 19.508 14.7844 19.3998L16.6842 17.5L14.7844 15.6002C14.6764 15.492 14.6158 15.3453 14.6159 15.1924C14.616 15.0395 14.6767 14.8929 14.7848 14.7848C14.8929 14.6767 15.0396 14.616 15.1924 14.6159C15.3453 14.6158 15.492 14.6764 15.6002 14.7844L17.5 16.6842L19.3998 14.7844C19.508 14.6764 19.6547 14.6158 19.8076 14.6159C19.9605 14.616 20.1071 14.6767 20.2152 14.7848C20.3233 14.8929 20.384 15.0395 20.3841 15.1924C20.3842 15.3453 20.3236 15.492 20.2156 15.6002L18.3158 17.5L20.2156 19.3998Z"
+                          fill="#EF5E5E"
+                        />
+                      </g>
+                      <defs>
+                        <filter
+                          id="filter0_d_416_3770"
+                          x="0.3232"
+                          y="0.3232"
+                          width="34.3536"
+                          height="34.3536"
+                          filterUnits="userSpaceOnUse"
+                          color-interpolation-filters="sRGB"
+                        >
+                          <feFlood
+                            flood-opacity="0"
+                            result="BackgroundImageFix"
+                          />
+                          <feColorMatrix
+                            in="SourceAlpha"
+                            type="matrix"
+                            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                            result="hardAlpha"
+                          />
+                          <feOffset />
+                          <feGaussianBlur stdDeviation="4.8384" />
+                          <feColorMatrix
+                            type="matrix"
+                            values="0 0 0 0 0.937255 0 0 0 0 0.368627 0 0 0 0 0.368627 0 0 0 0.5 0"
+                          />
+                          <feBlend
+                            mode="normal"
+                            in2="BackgroundImageFix"
+                            result="effect1_dropShadow_416_3770"
+                          />
+                          <feBlend
+                            mode="normal"
+                            in="SourceGraphic"
+                            in2="effect1_dropShadow_416_3770"
+                            result="shape"
+                          />
+                        </filter>
+                      </defs>
+                    </svg>
+                    <div className="max-w-[130px] ">
+                      <p className="text-[#FF3636] text-[10px] font-bold  tracking-tighter leading-normal   uppercase  text-start ">
+                        {truncateWords(candidate.rejection_reason, 7)}
+                      </p>
+                    </div>
+                  </div>
+                  <button className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors font-medium">
+                    [R] Unreject
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-sm text-[#211C1A] font-semibold ">
+                  <button className="flex items-center justify-center bg-[#D3EBE2] w-[106px] h-[40px] rounded-md hover:bg-green-200 transition-colors ">
+                    [A] Approve
+                  </button>
+                  <button className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors ">
+                    [H] Hold
+                  </button>
+                  <button className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors ">
+                    [R] Reject
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}

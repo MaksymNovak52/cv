@@ -1,4 +1,5 @@
 type CandidateRow = {
+  gender: string;
   cv_url: any;
   linkedin_url: any;
   highlights: any;
@@ -10,6 +11,7 @@ type CandidateRow = {
   full_name: string;
   is_favorite: boolean;
   current_title: string;
+  rejection_reason?: string | null;
   subtitle: string | null;
   avatar_url: string;
   match_percentage: number;
@@ -38,6 +40,7 @@ interface FormErrors {
 interface CandidateFormData {
   name: string;
   highlights: string;
+  gender: string;
   title: string;
   location: string;
   experience: string | null;

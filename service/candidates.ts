@@ -66,6 +66,8 @@ export const fetchCandidatesByJob = async (
       status: c.status,
       linkedin_url: c.linkedin_url,
       cv_url: c.cv_url,
+      rejection_reason: (c as any).rejection_reason ?? null,
+      gender: c.gender || "",
     })
   );
 };
@@ -104,7 +106,6 @@ export const fetchCounts = async (): Promise<{
   const { data, error } = await supabase.rpc("get_counts");
 
   if (error) throw new Error(error.message);
-  console.log("data", data);
 
   return data?.[0] ?? { total_candidates: 0, total_jobs: 0 };
 };
@@ -115,6 +116,7 @@ export interface CreateJobWithCandidateInput {
   jobDescription?: string;
   requirementsText?: string;
   candidate: {
+    gender: string;
     requirementsText: string;
     name: string;
     opinion: string;
@@ -156,6 +158,7 @@ export const createJobWithCandidate = async (
     _opinion: candidate.opinion,
     _job_id: jobId,
     _job_title: jobTitle,
+    _candidate_gender: candidate.gender ?? null,
     _job_description: jobDescription,
     _highlights: candidate.highlights,
     _candidate_portfolio: candidate.portfolio ?? null,
@@ -163,7 +166,7 @@ export const createJobWithCandidate = async (
     _skills: [],
     _candidate_requirements: candidate.requirementsText ?? null,
   });
-  console.log("data", data);
+  console.log("djasjdasjdasoidoia", data, candidate.gender);
 
   return data;
 };
@@ -217,11 +220,13 @@ export const seedAllCandidatesIntoJob = async (jobId: string) => {
 
 export const updateApplicationStatusByName = async (
   applicationId: string,
-  statusName: string
+  statusName: string,
+  rejectionReason?: string
 ) => {
   const { error } = await supabase.rpc("update_application_status_by_name", {
     _application_id: applicationId,
     _status_name: statusName,
+    _rejection_reason: rejectionReason ?? "",
   });
   if (error) throw new Error(error.message);
 };

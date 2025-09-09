@@ -97,6 +97,7 @@ export const useCreateJobWithCandidate = () => {
         linkedin: string;
         requirementsText: string;
         opinion: string;
+        gender: string;
       };
       skills: string[];
     }) => createJobWithCandidate(variables),
@@ -135,8 +136,16 @@ export const useRemoveCandidateFromJob = () => {
 export const useUpdateApplicationStatus = (jobId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (vars: { applicationId: string; statusName: string }) =>
-      updateApplicationStatusByName(vars.applicationId, vars.statusName),
+    mutationFn: (vars: {
+      applicationId: string;
+      statusName: string;
+      rejectionReason?: string;
+    }) =>
+      updateApplicationStatusByName(
+        vars.applicationId,
+        vars.statusName,
+        vars.rejectionReason
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["candidates"] });
       queryClient.invalidateQueries({ queryKey: ["pendingCounts"] });
