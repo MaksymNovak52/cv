@@ -3,9 +3,13 @@
 import { CANDIDATA_FORM_DATA } from "@/constants";
 import { useFormData, useLockBodyScroll } from "@/hooks";
 import { useUrlValidation } from "@/hooks/useUrlValidation";
-import { useCreateJobWithCandidate, useJobs } from "@/queries/candidates";
-import { CandidateFormData, FormErrors, Job } from "@/type";
-import { useState } from "react";
+import {
+  useCreateJobWithCandidate,
+  useJobs,
+  useUpdateCandidateWithApplication,
+} from "@/queries/candidates";
+import { CandidateFormData, CandidateRow, FormErrors, Job } from "@/type";
+import { useEffect, useState } from "react";
 import {
   CloseButton,
   FormField,
@@ -186,21 +190,36 @@ const getCandidateFormFields = (
 export function CreateJobCandidateModal({
   open,
   setOpen,
+  mode = "create",
+  initialCandidate = null,
+  initialJobId = null,
+  initialStep,
+  applicationId,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
+  mode?: "create" | "edit";
+  initialCandidate?: CandidateRow | null;
+  initialJobId?: string | null;
+  initialStep?: number;
+  applicationId?: string;
 }) {
   useLockBodyScroll(open);
+  const defaultStep =
+    mode === "edit"
+      ? CANDIDATA_FORM_DATA.STEPS.CANDIDATE_INFO
+      : CANDIDATA_FORM_DATA.STEPS.JOB_SELECTION;
 
-  const [step, setStep] = useState<number>(
-    CANDIDATA_FORM_DATA.STEPS.JOB_SELECTION
-  );
+  const [step, setStep] = useState<number>(initialStep ?? defaultStep);
+
   const [showValidationErrors, setShowValidationErrors] = useState(false);
   const [showJobValidation, setShowJobValidation] = useState(false);
   const [isCreatingNewJob, setIsCreatingNewJob] = useState(false);
 
   const { data: jobs } = useJobs();
   const mutation = useCreateJobWithCandidate();
+  const createMutation = useCreateJobWithCandidate();
+  const updateMutation = useUpdateCandidateWithApplication();
 
   const {
     jobData,
@@ -286,7 +305,7 @@ export function CreateJobCandidateModal({
     const skillsArray = candidateData.skills
       ? candidateData.skills
           .split(",")
-          .map((skill) => skill.trim())
+          .map((s) => s.trim())
           .filter(Boolean)
       : [];
 
@@ -320,19 +339,38 @@ export function CreateJobCandidateModal({
           }),
     };
 
-    mutation.mutate(payload, {
-      onSuccess: () => {
-        setOpen(false);
-        resetForm();
-        setStep(CANDIDATA_FORM_DATA.STEPS.JOB_SELECTION);
-        setShowValidationErrors(false);
-        setShowJobValidation(false);
-        setIsCreatingNewJob(false);
-      },
-      onError: (e) => {
-        console.error("Error creating job with candidate:", e);
-      },
-    });
+    if (mode === "edit") {
+      if (!applicationId) {
+        console.error("applicationId is required in edit mode");
+        return;
+      }
+      updateMutation.mutate(
+        { applicationId, ...payload },
+        {
+          onSuccess: () => {
+            setOpen(false);
+            resetForm();
+            setStep(defaultStep);
+            setShowValidationErrors(false);
+            setShowJobValidation(false);
+            setIsCreatingNewJob(false);
+          },
+          onError: (e) => console.error("Error updating candidate:", e),
+        }
+      );
+    } else {
+      createMutation.mutate(payload, {
+        onSuccess: () => {
+          setOpen(false);
+          resetForm();
+          setStep(CANDIDATA_FORM_DATA.STEPS.JOB_SELECTION);
+          setShowValidationErrors(false);
+          setShowJobValidation(false);
+          setIsCreatingNewJob(false);
+        },
+        onError: (e) => console.error("Error creating job with candidate:", e),
+      });
+    }
   };
 
   const enterCreateMode = () => {
@@ -345,6 +383,41 @@ export function CreateJobCandidateModal({
     setIsCreatingNewJob(false);
     setShowJobValidation(false);
   };
+  const cleanClearance = (s?: string | null) =>
+    (s || "").replace(/^English\s*/i, "").trim();
+
+  useEffect(() => {
+    if (!open) return;
+    if (mode !== "edit" || !initialCandidate) return;
+
+    if (initialJobId) {
+      updateJobData({ selectedJobId: initialJobId });
+    }
+
+    updateCandidateData({
+      name: initialCandidate.full_name || "",
+      title: initialCandidate.current_title || "",
+      location: initialCandidate.location || "",
+      experience:
+        (initialCandidate.experience_years as unknown as string) || "",
+      deployment: initialCandidate.deployment_status || "",
+      englishLevel:
+        cleanClearance(initialCandidate.clearance_status) ||
+        CANDIDATA_FORM_DATA.DEFAULT_ENGLISH_LEVEL,
+      salary: Number(initialCandidate.salary) || null,
+      portfolioUrl: initialCandidate.portfolio_url || "",
+      linkedinUrl: initialCandidate.linkedin_url || "",
+      skills: Array.isArray(initialCandidate.requirements)
+        ? (initialCandidate.requirements as unknown as string[]).join(", ")
+        : (initialCandidate.requirements as unknown as string) || "",
+      highlights: initialCandidate.highlights || "",
+      opinion: initialCandidate.opinion || "",
+      gender: (initialCandidate as any).gender || "",
+    });
+
+    setShowValidationErrors(false);
+    setShowJobValidation(false);
+  }, [open, mode, initialCandidate, initialJobId]);
 
   const candidateFormFields = getCandidateFormFields(
     candidateData,

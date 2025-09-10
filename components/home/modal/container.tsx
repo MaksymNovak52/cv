@@ -22,6 +22,7 @@ interface CandidateModalProps {
   selectedJobId: string;
   onCandidateChange: (candidate: CandidateRow) => void;
   jobDetails: Job;
+  onEditCandidate: (candidate: CandidateRow) => void;
 }
 
 export function CandidateModal({
@@ -32,6 +33,7 @@ export function CandidateModal({
   onClose,
   selectedJobId,
   onCandidateChange,
+  onEditCandidate,
 }: CandidateModalProps) {
   const { mutate: toggleFav } = useToggleFavorite(selectedJobId);
   const currentIndex = candidates.findIndex((c) => c.id === candidate.id);
@@ -403,10 +405,32 @@ export function CandidateModal({
                         : candidate.full_name} */}
                       {candidate.full_name}
                     </h3>
-                    <p className="text-[#A6A4A3] text-[12px] text-start font-bold leading-[-0.12px]">
+                    <p className="text-[#A6A4A3] text-[12px] text-start font-bold leading-[-0.12px] max-w-[90%]">
                       {candidate.current_title ||
                         "Multidisciplinary Designer & Artist, Interactive Design, 3D & Motion"}
                     </p>
+                    <button
+                      className="p-[6px]   hover:bg-gray-100 rounded-md transition-colors absolute right-[0px] top-[20px] "
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEditCandidate(candidate);
+                        onClose();
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="22"
+                        height="22"
+                        viewBox="0 0 22 22"
+                        fill="none"
+                      >
+                        <path
+                          d="M14.4375 2.53479C14.7524 2.53479 15.0546 2.65975 15.2773 2.88245L19.1172 6.72327C19.3397 6.94587 19.4647 7.24738 19.4648 7.56213C19.4648 7.87708 19.3399 8.17928 19.1172 8.40198L8.45703 19.0621H4.125C3.81006 19.0621 3.50786 18.9372 3.28516 18.7145C3.06258 18.4918 2.9375 18.1895 2.9375 17.8746V14.0348C2.9375 13.8789 2.96868 13.7247 3.02832 13.5807C3.088 13.4366 3.17489 13.3052 3.28516 13.1949L13.5977 2.88245C13.8204 2.65975 14.1226 2.53479 14.4375 2.53479Z"
+                          stroke="#211C1A"
+                        />
+                        <path d="M11.6875 5.5L16.5 10.3125" stroke="#211C1A" />
+                      </svg>
+                    </button>
                     <div className="flex flex-row items-center gap-2">
                       {candidate.portfolio_url && (
                         <div className="flex flex-row items-center gap-1">
