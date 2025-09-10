@@ -360,7 +360,7 @@ export function CreateJobCandidateModal({
       <div
         className={`bg-white rounded-xl shadow-lg   ${
           step === CANDIDATA_FORM_DATA.STEPS.CANDIDATE_INFO &&
-          "w-[360px] lg:w-full max-w-[751px]   lg:h-[99%] overflow-y-scroll lg:overflow-hidden lg:max-h-[801px] min-[1200px]:max-h-max px-[39px] py-[28px]"
+          "w-[360px] lg:w-full max-w-[751px]   lg:h-[99%] overflow-y-scroll lg:overflow-hidden lg:max-h-[801px] min-[1200px]:max-h-max lg:px-[39px]  py-[28px]"
         }
         ${
           step === CANDIDATA_FORM_DATA.STEPS.JOB_SELECTION &&
@@ -618,7 +618,7 @@ export function CreateJobCandidateModal({
                 </FormField>
               </div>
             </div>
-            <div className="flex justify-between  mt-2 lg:mt-4">
+            <div className="flex justify-between  mt-2 lg:mt-4 px-10 lg:px-0">
               <button
                 onClick={() => {
                   setStep(CANDIDATA_FORM_DATA.STEPS.JOB_SELECTION);

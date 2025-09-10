@@ -122,7 +122,7 @@ const Input = ({
           [{label || placeholder}] {isRequired && "*"}
         </p>
         {showError ? (
-          <span className="text-[10px] font-bold uppercase text-[#FF3636] mr-1">
+          <span className="text-[10px] font-bold uppercase text-[#FF3636] mr-[39px] lg:mr-1">
             {`  ${
               placeholder === "CV URL" ? "Attach CV" : `Enter ${placeholder}`
             } `}
@@ -172,7 +172,7 @@ const TextArea = ({
         <p className="text-[10px] font-bold uppercase text-[#BCBBBA]">
           [{label}] {isRequired && "*"}
         </p>
-        <p className="text-[10px] font-bold uppercase text-[#FF3636] mr-1">
+        <p className="text-[10px] font-bold uppercase text-[#FF3636] mr-[0px] lg:mr-1">
           {showError ? `Enter ${label}` : ""}
         </p>
       </div>
@@ -219,7 +219,7 @@ const Select = ({
         <p className="text-[10px] font-bold uppercase text-[#BCBBBA]">
           [{label}] {isRequired && "*"}
         </p>
-        <p className="text-[10px] font-bold uppercase text-[#FF3636] mr-1">
+        <p className="text-[10px] font-bold uppercase text-[#FF3636] mr-10 lg:mr-1">
           {showError ? `Select ${label}` : ""}
         </p>
       </div>
