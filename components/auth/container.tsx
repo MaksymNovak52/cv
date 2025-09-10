@@ -204,7 +204,7 @@ export function SignInContainer() {
                 aria-invalid={!!errors.email}
                 aria-describedby={errors.email ? "email-error" : undefined}
                 autoComplete="email"
-                className={`w-full border rounded-md placeholder-[#4D4D4D] font-bold focus:placeholder-[#4D4D4D]/50 font-fold px-3 py-2 outline-none text-[12px] text-[#4D4D4D]
+                className={`w-full border rounded-md placeholder-[#4D4D4D] font-bold focus:placeholder-[#4D4D4D]/50 font-fold px-3 py-2 outline-none text-[16px] lg:text-[12px]  text-[#4D4D4D]
                   ${errors.email ? "border-[#FF3636] " : "border-[#CCCCCC]  "}`}
               />
             </div>
@@ -238,7 +238,7 @@ export function SignInContainer() {
                   }
                   autoComplete="current-password"
                   minLength={6}
-                  className={`w-full border rounded-md placeholder-[#4D4D4D] font-bold focus:placeholder-[#4D4D4D]/50 font-fold px-3 py-2 pr-10 outline-none text-[12px] text-[#0a0a0a]
+                  className={`w-full border rounded-md placeholder-[#4D4D4D] font-bold focus:placeholder-[#4D4D4D]/50 font-fold px-3 py-2 pr-10 outline-none text-[16px] lg:text-[12px] text-[#0a0a0a]
         ${errors.password ? "border-[#FF3636]" : "border-[#CCCCCC]"}`}
                 />
 

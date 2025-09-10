@@ -226,11 +226,13 @@ export function AllCandidatesList() {
             />
           );
         })}
-        <MobileJobSelect
-          options={options}
-          value={selectedJobId as string}
-          onChange={setSelectedJobId}
-        />
+        {jobs?.length && (
+          <MobileJobSelect
+            options={options}
+            value={selectedJobId as string}
+            onChange={setSelectedJobId}
+          />
+        )}
       </div>
 
       <section

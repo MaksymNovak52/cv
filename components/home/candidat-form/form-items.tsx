@@ -136,7 +136,7 @@ const Input = ({
         placeholder={placeholder}
         onChange={onChange}
         aria-invalid={showError}
-        className={` w-[90%] lg:w-[330px] border rounded-md px-3 py-2 outline-none text-[12px] font-bold focus:placeholder-[#4D4D4D]/50 ${
+        className={` w-[90%] lg:w-[330px] border rounded-md px-3 py-2 outline-none text-[16px] lg:text-[12px] font-bold focus:placeholder-[#4D4D4D]/50 ${
           showError
             ? "border-[#FF3636] text-[#FF3636] placeholder-[#FF3636]"
             : "border-[#CCCCCC] text-[#4D4D4D]/90 placeholder-[#4D4D4D]/90"
