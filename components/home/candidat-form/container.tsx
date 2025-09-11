@@ -14,6 +14,7 @@ import {
   CloseButton,
   FormField,
   Input,
+  RadioSelect,
   Select,
   StepIndicator,
   TextArea,
@@ -117,34 +118,20 @@ const getCandidateFormFields = (
     isRequired: true,
     isEmpty: !candidateData.englishLevel?.trim(),
   },
-  {
-    label: "Gender",
-    component: (
-      <Select
-        value={candidateData.gender}
-        onChange={(e) => updateCandidateData({ gender: e.target.value })}
-        options={CANDIDATA_FORM_DATA.GENDERS.map((g) => ({
-          value: g,
-          label: g,
-        }))}
-        className="text-[12px]"
-        placeholder="Select Gender"
-        isRequired
-        showValidation={showValidationErrors}
-        label="Gender"
-      />
-    ),
-    isRequired: true,
-    isEmpty: !candidateData.gender?.trim(),
-  },
+
   {
     label: "Salary expected, in $usd",
     component: (
       <Input
         type="number"
         label="Salary expected, in $usd"
-        placeholder="Salary"
+        placeholder="Enter expected salary"
         value={candidateData.salary}
+        isRightBlock={true}
+        equityChecked={!!candidateData.hasEquity}
+        onEquityChange={(checked) =>
+          updateCandidateData({ hasEquity: checked })
+        }
         onChange={(e) =>
           updateCandidateData({ salary: Number(e.target.value) || null })
         }
@@ -155,6 +142,7 @@ const getCandidateFormFields = (
     isRequired: true,
     isEmpty: candidateData.salary === null,
   },
+
   {
     label: "Portfolio URL",
     component: (
@@ -163,8 +151,6 @@ const getCandidateFormFields = (
         value={candidateData.portfolioUrl}
         onChange={(e) => updateCandidateData({ portfolioUrl: e.target.value })}
         hasError={!!errors.portfolio}
-        showValidation={showValidationErrors}
-        isRequired
       />
     ),
     error: errors.portfolio,
@@ -179,11 +165,32 @@ const getCandidateFormFields = (
         value={candidateData.linkedinUrl}
         onChange={(e) => updateCandidateData({ linkedinUrl: e.target.value })}
         showValidation={showValidationErrors}
+        isRequired
       />
     ),
     error: errors.linkedin,
     isRequired: false,
     isEmpty: !candidateData.linkedinUrl?.trim(),
+  },
+  {
+    label: "Gender",
+    component: (
+      <RadioSelect
+        value={candidateData.gender}
+        onChange={(v) => updateCandidateData({ gender: v })}
+        options={CANDIDATA_FORM_DATA.GENDERS.map((g) => ({
+          value: g,
+          label: g,
+        }))}
+        className="text-[12px]"
+        // placeholder="Select Gender"
+        isRequired
+        showValidation={showValidationErrors}
+        label="Gender"
+      />
+    ),
+    isRequired: true,
+    isEmpty: !candidateData.gender?.trim(),
   },
 ];
 
@@ -245,7 +252,7 @@ export function CreateJobCandidateModal({
       Number(candidateData.salary) < 0 ||
       !candidateData.highlights?.trim() ||
       !candidateData.deployment?.trim() ||
-      !candidateData.portfolioUrl?.trim() ||
+      !candidateData.linkedinUrl?.trim() ||
       !candidateData.skills?.trim() ||
       !candidateData.gender?.trim()
     ) {
@@ -329,6 +336,7 @@ export function CreateJobCandidateModal({
         opinion: candidateData.opinion || "",
         requirements: candidateData.skills || "",
         gender: candidateData.gender || "",
+        has_equity: candidateData.hasEquity || false,
       },
       skills: skillsArray,
       ...(jobData.selectedJobId
@@ -345,7 +353,11 @@ export function CreateJobCandidateModal({
         return;
       }
       updateMutation.mutate(
-        { applicationId, ...payload },
+        {
+          applicationId,
+          ...payload,
+          has_equity: candidateData.hasEquity,
+        },
         {
           onSuccess: () => {
             setOpen(false);
@@ -393,6 +405,7 @@ export function CreateJobCandidateModal({
     if (initialJobId) {
       updateJobData({ selectedJobId: initialJobId });
     }
+    console.log("initialCandidate", initialCandidate);
 
     updateCandidateData({
       name: initialCandidate.full_name || "",
@@ -413,6 +426,7 @@ export function CreateJobCandidateModal({
       highlights: initialCandidate.highlights || "",
       opinion: initialCandidate.opinion || "",
       gender: (initialCandidate as any).gender || "",
+      hasEquity: initialCandidate.has_equity || false,
     });
 
     setShowValidationErrors(false);

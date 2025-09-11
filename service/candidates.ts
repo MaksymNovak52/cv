@@ -68,6 +68,7 @@ export const fetchCandidatesByJob = async (
       cv_url: c.cv_url,
       rejection_reason: (c as any).rejection_reason ?? null,
       gender: c.gender || "",
+      has_equity: c.has_equity,
     })
   );
 };
@@ -116,6 +117,7 @@ export interface CreateJobWithCandidateInput {
   jobDescription?: string;
   requirementsText?: string;
   candidate: {
+    has_equity: any;
     gender: string;
     requirementsText: string;
     name: string;
@@ -146,26 +148,30 @@ export const createJobWithCandidate = async (
     requirementsText,
   } = input;
 
-  const { data, error } = await supabase.rpc("create_job_with_candidate", {
-    _organization_id: organizationId,
-    _candidate_name: candidate.name ?? "",
-    _candidate_title: candidate.title ?? "",
-    _candidate_location: candidate.location ?? "",
-    _candidate_experience: candidate.experience,
-    _candidate_deployment: candidate.deployment ?? "",
-    _candidate_clearance: candidate.clearance ?? "",
-    _candidate_salary: candidate.salary,
-    _opinion: candidate.opinion,
-    _job_id: jobId,
-    _job_title: jobTitle,
-    _candidate_gender: candidate.gender ?? null,
-    _job_description: jobDescription,
-    _highlights: candidate.highlights,
-    _candidate_portfolio: candidate.portfolio ?? null,
-    _candidate_linkedin: candidate.linkedin ?? null,
-    _skills: [],
-    _candidate_requirements: candidate.requirementsText ?? null,
-  });
+  const { data, error } = await supabase.rpc(
+    "create_application_with_candidate",
+    {
+      _organization_id: organizationId,
+      _candidate_name: candidate.name ?? "",
+      _candidate_title: candidate.title ?? "",
+      _candidate_location: candidate.location ?? "",
+      _candidate_experience: candidate.experience,
+      _candidate_deployment: candidate.deployment ?? "",
+      _candidate_clearance: candidate.clearance ?? "",
+      _candidate_salary: candidate.salary,
+      _opinion: candidate.opinion,
+      _job_id: jobId,
+      _candidate_has_equity: candidate.has_equity,
+      _job_title: jobTitle,
+      _candidate_gender: candidate.gender ?? null,
+      _job_description: jobDescription,
+      _highlights: candidate.highlights,
+      _candidate_portfolio: candidate.portfolio ?? null,
+      _candidate_linkedin: candidate.linkedin ?? null,
+      _skills: [],
+      _candidate_requirements: candidate.requirementsText ?? null,
+    }
+  );
   console.log("djasjdasjdasoidoia", data, candidate.gender);
 
   return data;

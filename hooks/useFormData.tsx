@@ -17,13 +17,14 @@ export const useFormData = () => {
     experience: "",
     deployment: "",
     highlights: "",
+    hasEquity: true,
     englishLevel: CANDIDATA_FORM_DATA.DEFAULT_ENGLISH_LEVEL,
     salary: null,
     portfolioUrl: "",
     linkedinUrl: "",
     skills: "",
     opinion: "",
-    gender: "",
+    gender: CANDIDATA_FORM_DATA.GENDERS[0],
   });
 
   const [errors, setErrors] = useState<FormErrors>({});

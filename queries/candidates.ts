@@ -99,6 +99,7 @@ export const useCreateJobWithCandidate = () => {
         requirementsText: string;
         opinion: string;
         gender: string;
+        has_equity: boolean;
       };
       skills: string[];
     }) => createJobWithCandidate(variables),
@@ -169,6 +170,7 @@ export const usePendingCountsForAllJobs = () => {
 };
 
 type UpdatePayload = {
+  has_equity: any;
   applicationId: string;
 
   organizationId?: string | null;
@@ -228,33 +230,30 @@ export function useUpdateCandidateWithApplication(jobIdForInvalidate?: string) {
       );
       const skillsArr = toTextArray(p.skills ?? null);
 
-      const { data, error } = await supabase.rpc(
-        "update_candidate_with_application_v2",
-        {
-          _application_id: p.applicationId,
+      const { data, error } = await supabase.rpc("update_application_bundle", {
+        _application_id: p.applicationId,
+        _has_equity: p.has_equity,
+        _organization_id: p.organizationId ?? null,
+        _job_id: p.jobId ?? null,
+        _job_title: p.jobTitle ?? null,
+        _job_description: p.jobDescription ?? null,
 
-          _organization_id: p.organizationId ?? null,
-          _job_id: p.jobId ?? null,
-          _job_title: p.jobTitle ?? null,
-          _job_description: p.jobDescription ?? null,
+        _full_name: c.name ?? null,
+        _current_title: c.title ?? null,
+        _location: c.location ?? null,
+        _experience_years: toTextOrNull(c.experience),
+        _deployment_status: c.deployment ?? null,
+        _clearance_status: c.clearance ?? null,
+        _salary: c.salary ?? null,
+        _portfolio_url: c.portfolio ?? null,
+        _linkedin_url: c.linkedin ?? null,
 
-          _full_name: c.name ?? null,
-          _current_title: c.title ?? null,
-          _location: c.location ?? null,
-          _experience_years: toTextOrNull(c.experience),
-          _deployment_status: c.deployment ?? null,
-          _clearance_status: c.clearance ?? null,
-          _salary: c.salary ?? null,
-          _portfolio_url: c.portfolio ?? null,
-          _linkedin_url: c.linkedin ?? null,
-
-          _requirements: requirementsArr,
-          _gender: c.gender ?? null,
-          _opinion: p.opinion ?? c.opinion ?? null,
-          _highlights: c.highlights ?? null,
-          _skills: skillsArr,
-        }
-      );
+        _requirements: requirementsArr,
+        _gender: c.gender ?? null,
+        _opinion: p.opinion ?? c.opinion ?? null,
+        _highlights: c.highlights ?? null,
+        _skills: skillsArr,
+      });
       if (error) throw error;
       return data;
     },

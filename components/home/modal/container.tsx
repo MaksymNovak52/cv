@@ -432,34 +432,34 @@ export function CandidateModal({
                       </svg>
                     </button>
                     <div className="flex flex-row items-center gap-2">
-                      {candidate.portfolio_url && (
-                        <div className="flex flex-row items-center gap-1">
-                          <Link
-                            href={candidate.portfolio_url}
-                            target="_blank"
-                            className="text-[#211C1A] border-b border-[#211C1A] text-[12px] font-bold leading-[-0.12px]"
-                          >
-                            Portfolio
-                          </Link>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="10"
-                            height="10"
-                            viewBox="0 0 10 10"
-                            fill="none"
-                          >
-                            <g opacity="0.7">
-                              <path d="M1 9L9 1" stroke="#211C1A" />
-                              <path d="M2.5 1H9V7.5" stroke="#211C1A" />
-                            </g>
-                          </svg>
-                        </div>
-                      )}
-                      {candidate.portfolio_url && (
+                      <div className="flex flex-row items-center gap-1">
+                        <Link
+                          href={
+                            candidate.portfolio_url || candidate.linkedin_url
+                          }
+                          target="_blank"
+                          className="text-[#211C1A] border-b border-[#211C1A] text-[12px] font-bold leading-[-0.12px]"
+                        >
+                          Portfolio
+                        </Link>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="10"
+                          height="10"
+                          viewBox="0 0 10 10"
+                          fill="none"
+                        >
+                          <g opacity="0.7">
+                            <path d="M1 9L9 1" stroke="#211C1A" />
+                            <path d="M2.5 1H9V7.5" stroke="#211C1A" />
+                          </g>
+                        </svg>
+                      </div>
+                      {candidate.linkedin_url && (
                         <div className="flex flex-row items-center gap-1 cursor-pointer">
                           <Link
                             target="_blank"
-                            href={candidate.portfolio_url}
+                            href={candidate.linkedin_url}
                             className="text-[#211C1A] border-b border-[#211C1A] text-[12px] font-bold leading-[-0.12px]"
                           >
                             CV
@@ -605,7 +605,13 @@ export function CandidateModal({
                     <h3 className="text-[#A4A4A3] uppercase text-[10px] font-bold leading-[-0.1px] whitespace-nowrap">
                       Highlights:
                     </h3>
-                    <p className="text-[#615D5C] text-start text-[12px] font-bold leading-[-0.12px] w-full">
+                    <p
+                      className="text-[#615D5C] text-start text-[12px] font-bold leading-[-0.12px] break-words whitespace-pre-wrap"
+                      style={{
+                        overflowWrap: "anywhere",
+                        wordBreak: "break-word",
+                      }}
+                    >
                       {candidate.highlights ||
                         "Kairat’s recent project was a U.S.-based healthtech startup, where he built a mobile app that connected via Bluetooth to a physical sleep-tracking mask. The app integrated AI to provide sleep analytics, tips, and community features. He contributed advanced solutions like parallel reanimated animations (off the JS thread), Jest-based testing, and automated deployments with App Center and CodePush for seamless updates. Another key achievement was at a company, where he helped rebuild their mobile platform from scratch (React Native + native modules) to support 200K–300K daily active users, ensuring scalability and performance at high user loads."}{" "}
                     </p>
@@ -616,7 +622,14 @@ export function CandidateModal({
                     <h3 className="text-[#A4A4A3] uppercase text-[10px] font-bold leading-[-0.1px] whitespace-nowrap">
                       Requirements:{" "}
                     </h3>
-                    <p className="text-[#615D5C] text-start text-[12px] font-bold leading-[-0.12px]">
+                    <p
+                      className="text-[#615D5C] text-start text-[12px] font-bold leading-[-0.12px] break-words whitespace-pre-wrap"
+                      style={{
+                        overflowWrap: "anywhere",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      {" "}
                       {candidate.requirements ||
                         "	•	7+ years of experience in React Native and mobile development Has shipped apps to App Store & Google Play and also has experience with automated pipelines (App Center, GitHub/GitLab CI/CD, CodePush) Worked on hardware-integrated apps (Bluetooth mask device) and optimized native code Has been working with advanced animations & gesture handling (Reanimated, parallel native threads) Has been in collaboration with designers, backend, QA, PMs in a cross-functional setup, comfortable working in startup environment"}{" "}
                     </p>

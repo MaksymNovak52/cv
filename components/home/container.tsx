@@ -231,7 +231,8 @@ export function AllCandidatesList() {
       </div>
 
       <section
-        className={`max-w-[1416px] p-8 mx-auto bg-[#F9F7F5] min-h-[526px] lg:max-h-screen relative 
+        className={`max-w-[1416px] mx-2   p-8 lg:mx-auto bg-[#F3F2F1] min-h-[526px] min-[1400px]:max-h-screen relative 
+        ${isMobile && "rounded-lg"}
           ${
             selectedJobId == null
               ? "rounded-tr-lg rounded-b-lg"

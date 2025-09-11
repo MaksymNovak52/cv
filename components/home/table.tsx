@@ -364,9 +364,9 @@ export function CandidatesTable({
           return (
             <div className="space-y-3" onClick={() => handleCandidateClick(c)}>
               <p className="text-[12px] text-[#000]">
-                {c.requirements.length > 340
-                  ? c.requirements?.slice(0, 340) + " ..."
-                  : c.requirements}
+                {c.highlights.length > 340
+                  ? c.highlights?.slice(0, 340) + " ..."
+                  : c.highlights}
               </p>
             </div>
           );
@@ -392,9 +392,11 @@ export function CandidatesTable({
                     /month
                   </span>
                 </div>
-                <p className="text-[12px] text-[#A6A4A3] font-semibold">
-                  +Equity Package
-                </p>
+                {c.has_equity && (
+                  <p className="text-[12px] text-[#A6A4A3] font-semibold">
+                    +Equity Package
+                  </p>
+                )}
               </div>
 
               <button
@@ -566,97 +568,87 @@ export function CandidatesTable({
   const sticky = firstThreeEver && belowFirstRow;
   if (candidatesByJob.length <= 0) return <></>;
   return (
-    <div className="font-sans overflow-auto" ref={scrollRef}>
-      <div className="rounded-lg overflow-hidden">
-        <div
-          className={` mt-5 rounded-lg  max-h-[calc(100vh-100px)] overflow-y-auto ${
-            sticky && " overflow-y-auto"
-          }`}
-          ref={scrollRef}
-        >
-          <table className="w-full">
-            <thead className=" sticky top-0 z-10">
-              {table.getHeaderGroups().map((hg) => (
-                <tr key={hg.id}>
-                  {hg.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className="px-4 pb-[12px] text-left text-xs text-gray-500 font-medium uppercase tracking-wider"
-                      style={{ width: header.getSize() }}
-                    >
-                      {!header.isPlaceholder && (
-                        <div
-                          className={`flex items-start gap-2 text-[#A9A9A8] text-[10px] font-bold ${
-                            flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            ) !== "OVERVIEW"
-                              ? "pl-4"
-                              : ""
-                          }`}
-                        >
-                          {flexRender(
+    <div className="font-sans ">
+      <div
+        ref={scrollRef}
+        className="mt-5 rounded-lg max-h-[calc(100vh-100px)] overflow-y-auto"
+      >
+        <table className="w-full border-collapse">
+          <thead className="sticky top-0 z-20  border-b">
+            {table.getHeaderGroups().map((hg) => (
+              <tr key={hg.id}>
+                {hg.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    className="px-4 pb-[12px] text-left text-xs bg-[#F3F3F1] text-gray-500 font-medium uppercase tracking-wider"
+                    style={{ width: header.getSize() }}
+                  >
+                    {!header.isPlaceholder && (
+                      <div
+                        className={`flex items-start gap-2 text-[#A9A9A8] text-[10px] font-bold ${
+                          flexRender(
                             header.column.columnDef.header,
                             header.getContext()
-                          )}
-                          {header.column.getCanSort() && (
-                            <div
-                              className="cursor-pointer"
-                              onClick={header.column.getToggleSortingHandler()}
-                            >
-                              {header.column.getIsSorted() === "asc" && (
-                                <ChevronUp
-                                  size={14}
-                                  className="text-gray-400"
-                                />
-                              )}
-                              {header.column.getIsSorted() === "desc" && (
-                                <ChevronDown
-                                  size={14}
-                                  className="text-gray-400"
-                                />
-                              )}
-                              {!header.column.getIsSorted() && (
-                                <div className="w-3.5 h-3.5" />
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
+                          ) !== "OVERVIEW"
+                            ? "pl-4"
+                            : ""
+                        }`}
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {header.column.getCanSort() && (
+                          <div
+                            className="cursor-pointer"
+                            onClick={header.column.getToggleSortingHandler()}
+                          >
+                            {header.column.getIsSorted() === "asc" && (
+                              <ChevronUp size={14} className="text-gray-400" />
+                            )}
+                            {header.column.getIsSorted() === "desc" && (
+                              <ChevronDown
+                                size={14}
+                                className="text-gray-400"
+                              />
+                            )}
+                            {!header.column.getIsSorted() && (
+                              <div className="w-3.5 h-3.5" />
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
 
-            <tbody className="bg-white divide-y divide-gray-200">
-              {rows.map((row, rowIdx) => (
-                <tr
-                  key={row.id}
-                  className="hover:bg-gray-50 transition-colors rounded-lg"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      ref={
-                        cell.column.id === "overview"
-                          ? setFirstCellRef(rowIdx)
-                          : undefined
-                      }
-                      className="px-4 pt-4 pb-4 align-top"
-                      style={{ width: cell.column.getSize(), height: "150px" }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {rows.map((row, rowIdx) => (
+              <tr
+                key={row.id}
+                className="hover:bg-gray-50 transition-colors rounded-lg"
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    key={cell.id}
+                    ref={
+                      cell.column.id === "overview"
+                        ? setFirstCellRef(rowIdx)
+                        : undefined
+                    }
+                    className="px-4 pt-4 pb-4 align-top"
+                    style={{ width: cell.column.getSize(), height: "150px" }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

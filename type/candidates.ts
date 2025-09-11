@@ -1,4 +1,5 @@
 type CandidateRow = {
+  has_equity: any;
   gender: string;
   cv_url: any;
   linkedin_url: any;
@@ -40,6 +41,7 @@ interface FormErrors {
 interface CandidateFormData {
   name: string;
   highlights: string;
+  hasEquity?: boolean;
   gender: string;
   title: string;
   location: string;
