@@ -153,8 +153,8 @@ const getCandidateFormFields = (
         hasError={!!errors.portfolio}
       />
     ),
+    isRequired: false,
     error: errors.portfolio,
-    isRequired: true,
     isEmpty: !candidateData.portfolioUrl?.trim(),
   },
   {
@@ -166,10 +166,11 @@ const getCandidateFormFields = (
         onChange={(e) => updateCandidateData({ linkedinUrl: e.target.value })}
         showValidation={showValidationErrors}
         isRequired
+        hasError={Boolean(errors.linkedin)}
       />
     ),
     error: errors.linkedin,
-    isRequired: false,
+    isRequired: true,
     isEmpty: !candidateData.linkedinUrl?.trim(),
   },
   {
@@ -237,10 +238,15 @@ export function CreateJobCandidateModal({
     setErrors,
     resetForm,
   } = useFormData();
+  console.log("errors", errors);
 
   const { validateUrls } = useUrlValidation();
 
   const isCandidateInfoValid = () => {
+    const urlErrors = validateUrls(candidateData.linkedinUrl);
+
+    console.log("URL validation in isCandidateInfoValid:", urlErrors);
+
     if (
       !candidateData.name?.trim() ||
       !candidateData.title?.trim() ||
@@ -254,17 +260,9 @@ export function CreateJobCandidateModal({
       !candidateData.deployment?.trim() ||
       !candidateData.linkedinUrl?.trim() ||
       !candidateData.skills?.trim() ||
-      !candidateData.gender?.trim()
+      !candidateData.gender?.trim() ||
+      Object.keys(urlErrors).length > 0
     ) {
-      return false;
-    }
-
-    const urlErrors = validateUrls(
-      candidateData.portfolioUrl,
-      candidateData.linkedinUrl
-    );
-
-    if (Object.keys(urlErrors).length > 0) {
       return false;
     }
 
@@ -286,24 +284,22 @@ export function CreateJobCandidateModal({
   };
 
   const handleNextToOpinion = () => {
-    if (!isCandidateInfoValid()) {
+    const urlErrors = validateUrls(candidateData.linkedinUrl);
+
+    console.log("URL Validation Errors:", urlErrors);
+
+    if (!isCandidateInfoValid() || Object.keys(urlErrors).length > 0) {
       setShowValidationErrors(true);
-      const urlErrors = validateUrls(
-        candidateData.portfolioUrl,
-        candidateData.linkedinUrl
-      );
       setErrors(urlErrors);
       return;
     }
     setShowValidationErrors(false);
+    setErrors({});
     setStep(CANDIDATA_FORM_DATA.STEPS.RM_OPINION);
   };
 
   const handleSubmit = () => {
-    const urlErrors = validateUrls(
-      candidateData.portfolioUrl,
-      candidateData.linkedinUrl
-    );
+    const urlErrors = validateUrls(candidateData.portfolioUrl);
     if (Object.keys(urlErrors).length > 0) {
       setErrors(urlErrors);
       return;
