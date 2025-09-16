@@ -7,13 +7,38 @@ export function CandidateArrow({
   goToPrevious: () => void;
   goToNext: () => void;
 }) {
+  const handleClick = (callback: () => void) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    document.body.style.userSelect = "none";
+    document.body.style.webkitUserSelect = "none";
+
+    callback();
+
+    setTimeout(() => {
+      document.body.style.userSelect = "";
+      document.body.style.webkitUserSelect = "";
+    }, 100);
+  };
+
+  const buttonStyle = {
+    userSelect: "none" as const,
+    WebkitUserSelect: "none" as const,
+    MozUserSelect: "none" as const,
+    msUserSelect: "none" as const,
+    WebkitTouchCallout: "none" as const,
+    WebkitTapHighlightColor: "transparent",
+  };
+
   return (
     <>
       <span
-        className={`fixed top-1/2 right-[370px] z-10 translate-x-1/2 cursor-pointer translate-y-1/2   ${
+        className={`fixed top-1/2 right-[370px] z-10 translate-x-1/2 cursor-pointer translate-y-1/2 ${
           counts === 1 ? "hidden" : ""
         }`}
-        onClick={goToPrevious}
+        onClick={handleClick(goToNext)}
+        onMouseDown={(e) => e.preventDefault()}
+        style={buttonStyle}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -21,20 +46,21 @@ export function CandidateArrow({
           height="40"
           viewBox="0 0 40 40"
           fill="none"
+          style={{ pointerEvents: "none" }}
         >
           <path
             d="M13 20H29"
             stroke="white"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M22.4531 13L28.9986 20L22.4531 27"
             stroke="white"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <rect
             opacity="0.2"
@@ -48,10 +74,12 @@ export function CandidateArrow({
         </svg>
       </span>
       <span
-        className={`fixed top-1/2 left-[330px] z-10 translate-x-1/2 cursor-pointer translate-y-1/2  ${
+        className={`fixed top-1/2 left-[330px] z-10 translate-x-1/2 cursor-pointer translate-y-1/2 ${
           counts === 1 ? "hidden" : ""
         }`}
-        onClick={goToNext}
+        onClick={handleClick(goToPrevious)}
+        onMouseDown={(e) => e.preventDefault()}
+        style={buttonStyle}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -59,20 +87,21 @@ export function CandidateArrow({
           height="40"
           viewBox="0 0 40 40"
           fill="none"
+          style={{ pointerEvents: "none" }}
         >
           <path
             d="M28 20H12"
             stroke="white"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M18.5469 13L12.0014 20L18.5469 27"
             stroke="white"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <rect
             opacity="0.2"
