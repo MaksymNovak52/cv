@@ -17,7 +17,6 @@ import {
 import { ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import React, {
-  ReactNode,
   SetStateAction,
   useCallback,
   useEffect,
@@ -178,15 +177,6 @@ function useBelowFirstRow(
   return below;
 }
 
-interface SkillTagProps {
-  children: ReactNode;
-}
-const SkillTag: React.FC<SkillTagProps> = ({ children }) => (
-  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-md">
-    {children}
-  </span>
-);
-
 function cleanClearanceStatus(clearance: string | null): string {
   if (!clearance) return "";
   return clearance.replace(/^English\s*/i, "").trim();
@@ -249,14 +239,16 @@ export function CandidatesTable({
                   {c.current_title}
                 </p>
                 <div className="flex items-center gap-3">
-                  <Link
-                    href={(c as any).portfolio_url || ""}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[12px] text-[#211C1A] font-bold hover:underline"
-                  >
-                    Portfolio
-                  </Link>
+                  {c?.portfolio_url && (
+                    <Link
+                      href={(c as any).portfolio_url || ""}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[12px] text-[#211C1A] font-bold hover:underline"
+                    >
+                      Portfolio
+                    </Link>
+                  )}
                   <Link
                     href={(c as any).portfolio_url || ""}
                     target="_blank"
@@ -279,7 +271,10 @@ export function CandidatesTable({
         cell: ({ row }) => {
           const c = row.original;
           return (
-            <div className="space-y-2 text-sm">
+            <div
+              className="space-y-2 text-sm cursor-pointer"
+              onClick={() => handleCandidateClick(c)}
+            >
               <div className="flex items-center gap-2 text-[12px] font-semibold">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -362,7 +357,10 @@ export function CandidatesTable({
         cell: ({ row }) => {
           const c = row.original;
           return (
-            <div className="space-y-3" onClick={() => handleCandidateClick(c)}>
+            <div
+              className="space-y-3 cursor-pointer"
+              onClick={() => handleCandidateClick(c)}
+            >
               <p className="text-[12px] text-[#000]">
                 {c.highlights.length > 340
                   ? c.highlights?.slice(0, 340) + " ..."
@@ -380,7 +378,7 @@ export function CandidatesTable({
           const c = row.original;
           return (
             <div
-              className="flex flex-col justify-between    relative  h-full"
+              className="flex flex-col justify-between   cursor-pointer relative  h-full"
               onClick={() => handleCandidateClick(c)}
             >
               <div className="text-left mb-4 pl-4">
@@ -518,7 +516,7 @@ export function CandidatesTable({
                     [A] Approve
                   </button>
                   <button className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors font-medium">
-                    [H] Hold
+                    [H] Not Sure
                   </button>
                   <button className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors font-medium">
                     [R] Reject
@@ -565,16 +563,15 @@ export function CandidatesTable({
     [rowsLen]
   );
 
-  const sticky = firstThreeEver && belowFirstRow;
   if (candidatesByJob.length <= 0) return <></>;
   return (
-    <div className="font-sans ">
+    <div className=" ">
       <div
         ref={scrollRef}
         className="mt-5 rounded-lg max-h-[calc(100vh-100px)] overflow-y-auto"
       >
         <table className="w-full border-collapse">
-          <thead className="sticky top-0 z-20  border-b">
+          <thead className="sticky top-0 z-20  ">
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
                 {hg.headers.map((header) => (

@@ -5,14 +5,14 @@ import {
   VERTICAL_RESTRAINT,
 } from "@/constants";
 import { pickAvatar } from "@/lib/avatar";
-import {
-  useCounts,
-  useToggleFavorite,
-  useUpdateApplicationStatus,
-} from "@/queries/candidates";
+import { useUpdateApplicationStatus } from "@/queries/candidates";
 import { CandidateRow, Job } from "@/type";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { CandidateArrow } from "./arrows";
+import { CandidateList } from "./candidate-list";
+import { NewCandidatesList } from "./new-candidates";
+import { MockVacancy } from "./right-mock-vacancy";
 
 interface CandidateModalProps {
   candidate: CandidateRow;
@@ -35,9 +35,7 @@ export function CandidateModal({
   onCandidateChange,
   onEditCandidate,
 }: CandidateModalProps) {
-  const { mutate: toggleFav } = useToggleFavorite(selectedJobId);
   const currentIndex = candidates.findIndex((c) => c.id === candidate.id);
-  const { data, isLoading } = useCounts();
   const [isRejected, setIsRejected] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const { mutate: rejectStatus } = useUpdateApplicationStatus();
@@ -47,6 +45,23 @@ export function CandidateModal({
     startTime: 0,
     active: false,
   });
+  const [hasScroll, setHasScroll] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    const handleScroll = () => {
+      const scrolled = el.scrollTop > 0;
+      setHasScroll(scrolled);
+    };
+
+    el.addEventListener("scroll", handleScroll);
+    return () => {
+      el.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const isInteractiveTarget = (t: EventTarget | null) => {
     if (!(t instanceof Element)) return false;
@@ -216,13 +231,10 @@ export function CandidateModal({
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center backdrop-blur-md overflow-hidden">
       <div className="bg-white mt-[120px] lg:mt-0  min-[2000px]:w-[1200px] w-[98%] lg:w-[636px] lg:h-[99%] rounded-md max-w-4xl max-h-screen relative flex flex-col">
-        <div className="fixed  lg:left-[28px] lg:flex flex-col items-start left-[12px] top-[12px] lg:top-[28px] text-[16px] text-white font-bold leading-[-0.16px] z-10">
-          <span>{jobDetails.title}</span>
-          <p className="text-[10px] text-[#CFCDCB] leading-[-0.1px] uppercase">
-            {candidates?.length} new candidates
-          </p>
-        </div>
-
+        <NewCandidatesList
+          counts={candidates.length}
+          title={jobDetails.title}
+        />
         <div
           className="fixed right-[32px] cursor-pointer flex flex-col items-start top-[24px] lg:top-[28px] text-[16px] text-white font-bold leading-[-0.16px] z-10"
           onClick={onClose}
@@ -250,112 +262,23 @@ export function CandidateModal({
             />
           </svg>
         </div>
-        {candidates.length >= 2 && (
-          <div
-            className={`fixed -right-10 top-[5%]   hidden lg:flex  min-w-[50 0px] w-[50px]  items-end    min-h-[600px] `}
-          >
-            <div className="w-[20px] bg-white h-[600px]  rounded-xl relative  z-[10]"></div>
-            <div className="w-[20px] bg-[#DDDEDF] h-[600px]  rounded-tl-xl relative  right-[8px] rotate-[-4deg] z-[9] top-4"></div>
-            <div className="w-[20px] bg-[#B5B1AE] h-[600px]  rounded-tl-xl relative  right-[30px] rotate-[-5deg] z-[2] top-[30px]"></div>
-          </div>
-        )}
-        <div className="fixed hidden lg:flex left-[32px]  flex-col items-start bottom-[32px] text-[16px] text-white font-bold leading-[-0.16px] z-10">
-          {candidates?.map((candidateItem) => (
-            <p
-              key={candidateItem.id}
-              className={`text-[12px] leading-[-0.1px] uppercase cursor-pointer hover:text-white transition-colors ${
-                candidateItem.id === candidate.id
-                  ? "text-white"
-                  : "text-[#B2B8B5]"
-              }`}
-              onClick={() => handleCandidateClick(candidateItem)}
-            >
-              {candidateItem.full_name}
-            </p>
-          ))}
-        </div>
-        <span
-          className={`fixed top-1/2 right-[370px] z-10 translate-x-1/2 cursor-pointer translate-y-1/2   ${
-            candidates.length === 1 ? "hidden" : ""
-          }`}
-          onClick={goToPrevious}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="40"
-            height="40"
-            viewBox="0 0 40 40"
-            fill="none"
-          >
-            <path
-              d="M13 20H29"
-              stroke="white"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M22.4531 13L28.9986 20L22.4531 27"
-              stroke="white"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <rect
-              opacity="0.2"
-              x="0.5"
-              y="0.5"
-              width="39"
-              height="39"
-              rx="19.5"
-              stroke="white"
-            />
-          </svg>
-        </span>
-        <span
-          className={`fixed top-1/2 left-[330px] z-10 translate-x-1/2 cursor-pointer translate-y-1/2  ${
-            candidates.length === 1 ? "hidden" : ""
-          }`}
-          onClick={goToNext}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="40"
-            height="40"
-            viewBox="0 0 40 40"
-            fill="none"
-          >
-            <path
-              d="M28 20H12"
-              stroke="white"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M18.5469 13L12.0014 20L18.5469 27"
-              stroke="white"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <rect
-              opacity="0.2"
-              x="-0.5"
-              y="0.5"
-              width="39"
-              height="39"
-              rx="19.5"
-              transform="matrix(-1 0 0 1 39 0)"
-              stroke="white"
-            />
-          </svg>
-        </span>
+        {candidates.length >= 2 && <MockVacancy />}
+        <CandidateList
+          candidates={candidates}
+          candidate={candidate}
+          handleCandidateClick={handleCandidateClick}
+        />
+        <CandidateArrow
+          counts={candidates.length}
+          goToPrevious={goToPrevious}
+          goToNext={goToNext}
+        />
         <div
-          className="flex-1 overflow-y-auto pb-20 touch-pan-y"
+          className="flex-1 overflow-y-auto pb-20 touch-pan-y border-t "
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
+          ref={contentRef}
         >
           <div className="flex-1 overflow-y-auto  pb-20 ">
             <div className="px-6 ">
@@ -375,7 +298,7 @@ export function CandidateModal({
                         {candidate.full_name}
                       </h3>
 
-                      <span className="text-white text-[8px] leading-[-0.08px] rounded-[4px]  py-[3px] px-[5px] font-bold flex items-center justify-center bg-[#259A6D]  w-auto max-w-[72px] mt-4">
+                      <span className="text-white text-[8px] uppercase leading-[-0.08px] rounded-[4px]  py-[3px] px-[5px] font-bold flex items-center justify-center bg-[#259A6D]  w-auto max-w-[72px] mt-4">
                         {candidate.status === "Pending"
                           ? "New"
                           : candidate.status === "Hold"
@@ -654,11 +577,15 @@ export function CandidateModal({
           </div>
 
           <div
-            className={`absolute bottom-10  lg:bottom-0 left-0 right-0 bg-white  flex lg:flex-row ${
+            className={`absolute bottom-10 lg:bottom-0 left-0 right-0 bg-white flex lg:flex-row ${
               candidate.rejection_reason
-                ? "flex-row  items-center"
+                ? "flex-row items-center"
                 : "flex-col items-start"
-            }  lg:items-center justify-between border-[#E3E3E3] p-6 rounded-b-md`}
+            } lg:items-center justify-between p-6 rounded-b-md
+  ${hasScroll ? "border-t border-[#E3E3E3]" : ""}`}
+            style={{
+              boxShadow: hasScroll ? "1px -9px 5px 0px rgba(0,0,0,0.04)" : "",
+            }}
           >
             <div className="text-left ">
               <div className="flex flex-row">
@@ -718,10 +645,10 @@ export function CandidateModal({
                     [A] Approve
                   </button>
                   <button
-                    className="flex items-center justify-center text-[14px] leading-[-0.14px] font-bold  border border-[#E5E5E5] w-[105px] h-[44px] rounded-md hover:bg-gray-50 transition-colors "
+                    className="flex items-center justify-center text-[14px] leading-[-0.14px] font-bold  border border-[#E5E5E5] w-[135px] h-[44px] rounded-md hover:bg-gray-50 transition-colors "
                     onClick={() => handleHold(candidate.id)}
                   >
-                    [H] Hold
+                    [H] To interview
                   </button>
                   <button
                     className="flex items-center justify-center text-[14px] leading-[-0.14px] font-bold  border border-[#E5E5E5] w-[105px] h-[44px] rounded-md hover:bg-gray-50 transition-colors "

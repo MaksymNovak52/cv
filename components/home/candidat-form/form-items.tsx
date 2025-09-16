@@ -139,11 +139,7 @@ const Input = ({
       </div>
 
       <div
-        className={`flex flex-row items-center w-[90%] lg:w-[330px] border rounded-md px-3 py-2 outline-none text-[16px] lg:text-[12px] font-bold focus:placeholder-[#4D4D4D]/50 ${
-          showError
-            ? "border-[#FF3636] text-[#FF3636] placeholder-[#FF3636]"
-            : "border-[#CCCCCC] text-[#4D4D4D]/90 placeholder-[#4D4D4D]/90"
-        } ${className}`}
+        className={`flex flex-row items-center w-[90%] lg:w-[330px] border rounded-md px-3 py-2  outline-none text-[16px] lg:text-[12px] font-bold placeholder-red-400/90 focus:placeholder-[#4D4D4D]/50 ${className} `}
       >
         <input
           type={type}
@@ -151,7 +147,11 @@ const Input = ({
           placeholder={placeholder}
           onChange={onChange}
           aria-invalid={showError}
-          className="outline-none w-full bg-transparent no-spinners"
+          className={`outline-none w-full bg-transparent no-spinners  focus:placeholder-[#4D4D4D]/50 ${
+            showError
+              ? "border-[#FF3636] text-[#FF3636] placeholder-[#FF3636]"
+              : "border-[#CCCCCC] text-[#4D4D4D]/90 placeholder-[#4D4D4D]/90"
+          }`}
         />
 
         {isRightBlock && (
@@ -166,38 +166,25 @@ const Input = ({
               onChange={(e) => onEquityChange?.(e.target.checked)}
             />
             <span
-              className="relative inline-flex items-center justify-center w-[13px] h-[13px] rounded-full p-[2px] bg-[#C0C0C0] shadow-md
-                         peer-focus-visible:ring-2 peer-focus-visible:ring-[#597D9B] peer-focus-visible:ring-offset-1"
+              className={`relative inline-flex items-center justify-center w-[13px] h-[13px] rounded-full p-[2px] ${
+                !checked ? "bg-[#C0C0C0]" : "bg-[#259A6D]"
+              } shadow-md
+                         peer-focus-visible:ring-2 peer-focus-visible:ring-[#597D9B] peer-focus-visible:ring-offset-1`}
               aria-hidden
             >
-              {checked ? (
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-[11px] h-[11px]"
-                  fill="none"
-                >
-                  <path
-                    d="M20 6L9 17L4 12"
-                    stroke="white"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-[11px] h-[11px]"
-                  fill="none"
-                >
-                  <path
-                    d="M6 6L18 18M18 6L6 18"
-                    stroke="white"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              )}
+              <svg
+                viewBox="0 0 24 24"
+                className="w-[11px] h-[11px]"
+                fill="none"
+              >
+                <path
+                  d="M20 6L9 17L4 12"
+                  stroke="white"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </span>
           </label>
         )}

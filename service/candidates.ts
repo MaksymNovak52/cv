@@ -39,7 +39,6 @@ export const fetchCandidatesByJob = async (
   if (error) {
     throw new Error(error.message);
   }
-  console.log("data", data);
 
   if (!data) return [];
 
@@ -172,7 +171,6 @@ export const createJobWithCandidate = async (
       _candidate_requirements: candidate.requirementsText ?? null,
     }
   );
-  console.log("djasjdasjdasoidoia", data, candidate.gender);
 
   return data;
 };
@@ -267,4 +265,19 @@ export async function fetchPendingCountsForAllJobs() {
   const { data, error } = await supabase.rpc("get_pending_counts_for_all_jobs");
   if (error) throw error;
   return data as { job_id: string; pending_count: number }[];
+}
+
+export async function updateJob(
+  jobId: string,
+  title: string,
+  description: string
+) {
+  const { data, error } = await supabase.rpc("update_job", {
+    _job_id: jobId,
+    _title: title,
+    _description: description,
+  });
+
+  if (error) throw error;
+  return data;
 }

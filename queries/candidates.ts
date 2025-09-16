@@ -13,6 +13,7 @@ import {
   removeCandidateFromJob,
   toggleFavorite,
   updateApplicationStatusByName,
+  updateJob,
 } from "@/service";
 import { CandidateRow } from "@/type";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -275,6 +276,24 @@ export function useUpdateCandidateWithApplication(jobIdForInvalidate?: string) {
           queryKey: ["favoritesCount", jobIdForInvalidate],
         });
       }
+    },
+  });
+}
+export function useUpdateJob() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      jobId,
+      title,
+      description,
+    }: {
+      jobId: string;
+      title: string;
+      description: string;
+    }) => updateJob(jobId, title, description),
+    onSuccess: (_data, vars) => {
+      qc.invalidateQueries({ queryKey: ["jobs"] });
     },
   });
 }
