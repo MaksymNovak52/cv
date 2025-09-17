@@ -35,7 +35,7 @@ export function RmOpinionBlock({
             height="h-[256px]"
             placeholder="Write recruiter/manager opinion about candidate"
             isRequired
-            showValidation
+            showValidation={candidateData.opinion?.length > 1}
           />
         </FormField>
 

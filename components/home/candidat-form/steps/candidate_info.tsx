@@ -1,5 +1,6 @@
 import { CANDIDATA_FORM_DATA } from "@/constants";
 import { CandidateFormData, FormErrors } from "@/type";
+import { useEffect, useRef, useState } from "react";
 import { FormField, TextArea } from "../form-items";
 
 export function CandidateInfoBlock({
@@ -26,9 +27,29 @@ export function CandidateInfoBlock({
 
   showValidationErrors: boolean;
 }) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [hasScroll, setHasScroll] = useState(false);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    const handleScroll = () => {
+      const scrolled = el.scrollTop > 0;
+      setHasScroll(scrolled);
+    };
+
+    el.addEventListener("scroll", handleScroll);
+    return () => {
+      el.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   return (
-    <div className="flex flex-col gap-0  ">
-      <div className=" h-[540px]  min-[1600px]:h-[600px] overflow-y-scroll">
+    <div className="flex flex-col gap-0   overflow-hidden">
+      <div
+        className=" h-[540px]  min-[1600px]:h-[600px]  overflow-y-scroll "
+        ref={contentRef}
+      >
         <h5 className="text-[40px] w-full text-center  font-medium text-[#211C1A] font-eb-garamond">
           {mode === "edit" ? "Edit candidate" : "  Candidate Info"}
         </h5>
@@ -74,14 +95,21 @@ export function CandidateInfoBlock({
           </FormField>
         </div>
       </div>
+
       <div
-        className={` flex   mt-2 lg:mt-4 px-10 lg:px-0 
+        className={` flex relative  mt-2 lg:mt-4 px-10 lg:px-0 
              ${
                mode !== "edit"
                  ? "justify-between "
                  : "w-full items-center justify-center  "
              }`}
       >
+        <div
+          className="w-[751px] h-[20px]  absolute -left-10 -top-2"
+          style={{
+            boxShadow: hasScroll ? "1px -12px 5px 0px rgba(0,0,0,0.02)" : "",
+          }}
+        ></div>
         {mode !== "edit" && (
           <button
             onClick={() => {

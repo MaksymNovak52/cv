@@ -46,6 +46,7 @@ export function CandidateModal({
     active: false,
   });
   const [hasScroll, setHasScroll] = useState(false);
+  const [rejectionError, setRejectionError] = useState("");
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -128,19 +129,30 @@ export function CandidateModal({
   };
 
   const goToPrevious = () => {
-    const prevIndex =
-      currentIndex > 0 ? currentIndex - 1 : candidates.length - 1;
-    const prevCandidate = candidates[prevIndex];
-    onCandidateChange(prevCandidate);
+    if (candidates.length <= 1) return;
+
+    if (currentIndex > 0) {
+      const prevIndex = currentIndex - 1;
+      const prevCandidate = candidates[prevIndex];
+
+      if (prevCandidate && prevCandidate.id) {
+        onCandidateChange(prevCandidate);
+      }
+    }
   };
 
   const goToNext = () => {
-    const nextIndex =
-      currentIndex < candidates.length - 1 ? currentIndex + 1 : 0;
-    const nextCandidate = candidates[nextIndex];
-    onCandidateChange(nextCandidate);
-  };
+    if (candidates.length <= 1) return;
 
+    if (currentIndex < candidates.length - 1) {
+      const nextIndex = currentIndex + 1;
+      const nextCandidate = candidates[nextIndex];
+
+      if (nextCandidate && nextCandidate.id) {
+        onCandidateChange(nextCandidate);
+      }
+    }
+  };
   const handleCandidateClick = (candidateItem: CandidateRow) => {
     if (candidateItem.id !== candidate.id) {
       onCandidateChange(candidateItem);
@@ -178,19 +190,24 @@ export function CandidateModal({
 
   const handleReject = async (id: string) => {
     try {
-      if (rejectionReason.length < 1) return;
+      if (rejectionReason.trim().length < 1) {
+        setRejectionError("Please provide a reason for rejection");
+
+        return;
+      }
       await rejectStatus({
         applicationId: candidate.application_id,
         statusName: "Rejected",
-        rejectionReason,
+        rejectionReason: rejectionReason.trim(),
       });
       setIsRejected(true);
-    } catch (error) {
-    } finally {
       setRejectionReason("");
       onClose();
+    } catch (error) {
+      console.error("Failed to reject candidate:", error);
     }
   };
+
   const handleUnReject = async (id: string) => {
     try {
       await rejectStatus({
@@ -272,6 +289,8 @@ export function CandidateModal({
           counts={candidates.length}
           goToPrevious={goToPrevious}
           goToNext={goToNext}
+          isBackBlock={currentIndex > 0}
+          isNextBlock={currentIndex < candidates.length - 1}
         />
         <div
           className="flex-1 overflow-y-auto pb-20 touch-pan-y border-t "
@@ -280,7 +299,7 @@ export function CandidateModal({
           onTouchEnd={onTouchEnd}
           ref={contentRef}
         >
-          <div className="flex-1 overflow-y-auto  pb-20 ">
+          <div className="flex-1   pb-20 ">
             <div className="px-6 ">
               <div className="sticky top-0 bg-white z-10 pb-4 pt-6">
                 <div className="flex flex-row items-center justify-between">
@@ -603,16 +622,32 @@ export function CandidateModal({
             </div>
             {isRejected && (
               <div className="absolute bottom-[24px] lg:bottom-[9px] right-[1.5px]  z-[20] lg:right-4 bg-[#1C2831] w-full  lg:w-[451px] h-[126px] p-[12px]  rounded-lg flex flex-col justify-center gap-2 ">
-                <h4 className="text-white text-[24px] font-normal  font-eb-garamond leading-[21.6px] lg:w-[270px]">
-                  Make candidate matches more precise for you
+                <h4
+                  className={`${
+                    rejectionError ? "text-[#FF3636] mb-2" : "text-white"
+                  } text-[24px] font-normal  font-eb-garamond leading-[21.6px] lg:w-[270px]`}
+                >
+                  {rejectionError
+                    ? "Enter rejection reason"
+                    : " Make candidate matches more precise for you"}{" "}
                 </h4>
                 <div className="flex flex-row items-center gap-1">
                   <input
                     type="text"
                     value={rejectionReason}
-                    onChange={(e) => setRejectionReason(e.target.value)}
+                    onChange={(e) => {
+                      setRejectionReason(e.target.value);
+                      if (rejectionError) setRejectionError("");
+                    }}
                     placeholder="Reason for rejection"
-                    className="w-[330px] border border-[#49535A] bg-transparent rounded-md px-3 py-2 outline-none text-[12px] text-[#BBBEC1]"
+                    className={`
+                      w-[330px] border  bg-transparent rounded-md px-3 py-2 outline-none text-[12px] 
+                      ${
+                        rejectionError
+                          ? "border-[#FF3636] text-[#FF3636] placeholder-[#FF3636]"
+                          : "border-[#49535A] text-[#BBBEC1]"
+                      }
+                      `}
                   />
                   <button
                     className="flex items-center bg-[#2A353D] text-white justify-center text-[14px] leading-[-0.14px] font-bold    w-[92px] h-[40px] rounded-md  "
@@ -645,10 +680,10 @@ export function CandidateModal({
                     [A] Approve
                   </button>
                   <button
-                    className="flex items-center justify-center text-[14px] leading-[-0.14px] font-bold  border border-[#E5E5E5] w-[135px] h-[44px] rounded-md hover:bg-gray-50 transition-colors "
+                    className="flex items-center justify-center text-[14px] leading-[-0.14px] font-bold  border border-[#E5E5E5] w-[105px] h-[44px] rounded-md hover:bg-gray-50 transition-colors "
                     onClick={() => handleHold(candidate.id)}
                   >
-                    [H] To interview
+                    [H] No sure
                   </button>
                   <button
                     className="flex items-center justify-center text-[14px] leading-[-0.14px] font-bold  border border-[#E5E5E5] w-[105px] h-[44px] rounded-md hover:bg-gray-50 transition-colors "

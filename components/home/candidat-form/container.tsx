@@ -23,7 +23,8 @@ const getCandidateFormFields = (
   candidateData: CandidateFormData,
   updateCandidateData: (updates: Partial<CandidateFormData>) => void,
   errors: FormErrors,
-  showValidationErrors: boolean = false
+  showValidationErrors: boolean = false,
+  clearFieldError: (fieldName: keyof FormErrors | string) => void
 ) => [
   {
     label: "FULL NAME",
@@ -31,7 +32,12 @@ const getCandidateFormFields = (
       <Input
         placeholder="Full Name"
         value={candidateData.name}
-        onChange={(e) => updateCandidateData({ name: e.target.value })}
+        onChange={(e) => {
+          updateCandidateData({ name: e.target.value });
+          if (showValidationErrors && e.target.value.trim()) {
+            clearFieldError("name");
+          }
+        }}
         isRequired
         showValidation={showValidationErrors}
       />
@@ -45,7 +51,12 @@ const getCandidateFormFields = (
       <Input
         placeholder="Current position"
         value={candidateData.title}
-        onChange={(e) => updateCandidateData({ title: e.target.value })}
+        onChange={(e) => {
+          updateCandidateData({ title: e.target.value });
+          if (showValidationErrors && e.target.value.trim()) {
+            clearFieldError("title");
+          }
+        }}
         isRequired
         showValidation={showValidationErrors}
       />
@@ -59,7 +70,12 @@ const getCandidateFormFields = (
       <Input
         placeholder="Location"
         value={candidateData.location}
-        onChange={(e) => updateCandidateData({ location: e.target.value })}
+        onChange={(e) => {
+          updateCandidateData({ location: e.target.value });
+          if (showValidationErrors && e.target.value.trim()) {
+            clearFieldError("location");
+          }
+        }}
         isRequired
         showValidation={showValidationErrors}
       />
@@ -74,7 +90,12 @@ const getCandidateFormFields = (
         type="string"
         placeholder="Experience (years)"
         value={candidateData.experience}
-        onChange={(e) => updateCandidateData({ experience: e.target.value })}
+        onChange={(e) => {
+          updateCandidateData({ experience: e.target.value });
+          if (showValidationErrors && e.target.value.trim()) {
+            clearFieldError("experience");
+          }
+        }}
         isRequired
         showValidation={showValidationErrors}
       />
@@ -89,7 +110,12 @@ const getCandidateFormFields = (
       <Input
         placeholder="Notice Period"
         value={candidateData.deployment}
-        onChange={(e) => updateCandidateData({ deployment: e.target.value })}
+        onChange={(e) => {
+          updateCandidateData({ deployment: e.target.value });
+          if (showValidationErrors && e.target.value.trim()) {
+            clearFieldError("deployment");
+          }
+        }}
         isRequired
         showValidation={showValidationErrors}
       />
@@ -102,7 +128,12 @@ const getCandidateFormFields = (
     component: (
       <Select
         value={candidateData.englishLevel}
-        onChange={(e) => updateCandidateData({ englishLevel: e.target.value })}
+        onChange={(e) => {
+          updateCandidateData({ englishLevel: e.target.value });
+          if (showValidationErrors && e.target.value.trim()) {
+            clearFieldError("englishLevel");
+          }
+        }}
         options={CANDIDATA_FORM_DATA.ENGLISH_LEVELS.map((level) => ({
           value: level,
           label: level,
@@ -117,7 +148,6 @@ const getCandidateFormFields = (
     isRequired: true,
     isEmpty: !candidateData.englishLevel?.trim(),
   },
-
   {
     label: "Salary expected, in $usd",
     component: (
@@ -131,9 +161,13 @@ const getCandidateFormFields = (
         onEquityChange={(checked) =>
           updateCandidateData({ hasEquity: checked })
         }
-        onChange={(e) =>
-          updateCandidateData({ salary: Number(e.target.value) || null })
-        }
+        onChange={(e) => {
+          const value = Number(e.target.value) || null;
+          updateCandidateData({ salary: value });
+          if (showValidationErrors && value !== null && value > 0) {
+            clearFieldError("salary");
+          }
+        }}
         isRequired
         showValidation={showValidationErrors}
       />
@@ -141,14 +175,18 @@ const getCandidateFormFields = (
     isRequired: true,
     isEmpty: candidateData.salary === null,
   },
-
   {
     label: "Portfolio URL",
     component: (
       <Input
         placeholder="Portfolio URL"
         value={candidateData.portfolioUrl}
-        onChange={(e) => updateCandidateData({ portfolioUrl: e.target.value })}
+        onChange={(e) => {
+          updateCandidateData({ portfolioUrl: e.target.value });
+          if (errors.portfolio && e.target.value.trim()) {
+            clearFieldError("portfolio");
+          }
+        }}
         hasError={!!errors.portfolio}
       />
     ),
@@ -162,7 +200,15 @@ const getCandidateFormFields = (
       <Input
         placeholder="CV URL"
         value={candidateData.linkedinUrl}
-        onChange={(e) => updateCandidateData({ linkedinUrl: e.target.value })}
+        onChange={(e) => {
+          updateCandidateData({ linkedinUrl: e.target.value });
+          if (
+            (showValidationErrors || errors.linkedin) &&
+            e.target.value.trim()
+          ) {
+            clearFieldError("linkedin");
+          }
+        }}
         showValidation={showValidationErrors}
         isRequired
         hasError={Boolean(errors.linkedin)}
@@ -177,13 +223,17 @@ const getCandidateFormFields = (
     component: (
       <RadioSelect
         value={candidateData.gender}
-        onChange={(v) => updateCandidateData({ gender: v })}
+        onChange={(v) => {
+          updateCandidateData({ gender: v });
+          if (showValidationErrors && v.trim()) {
+            clearFieldError("gender");
+          }
+        }}
         options={CANDIDATA_FORM_DATA.GENDERS.map((g) => ({
           value: g,
           label: g,
         }))}
         className="text-[12px]"
-        // placeholder="Select Gender"
         isRequired
         showValidation={showValidationErrors}
         label="Gender"
@@ -263,6 +313,28 @@ export function CreateJobCandidateModal({
     }
 
     return true;
+  };
+  const clearFieldError = (fieldName: keyof FormErrors | string) => {
+    setErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      delete newErrors[fieldName as keyof FormErrors];
+      return newErrors;
+    });
+
+    const hasRequiredFieldsComplete =
+      candidateData.name?.trim() &&
+      candidateData.title?.trim() &&
+      candidateData.location?.trim() &&
+      candidateData.experience !== null &&
+      candidateData.englishLevel?.trim() &&
+      candidateData.salary !== null &&
+      candidateData.deployment?.trim() &&
+      candidateData.linkedinUrl?.trim() &&
+      candidateData.gender?.trim();
+
+    if (hasRequiredFieldsComplete && showValidationErrors) {
+      setShowValidationErrors(false);
+    }
   };
 
   const handleNextToCandidateInfo = () => {
@@ -427,7 +499,8 @@ export function CreateJobCandidateModal({
     candidateData,
     updateCandidateData,
     errors,
-    showValidationErrors
+    showValidationErrors,
+    clearFieldError
   );
 
   if (!open) return null;
@@ -437,7 +510,7 @@ export function CreateJobCandidateModal({
       <div
         className={`bg-white rounded-xl shadow-lg   relative ${
           step === CANDIDATA_FORM_DATA.STEPS.CANDIDATE_INFO &&
-          "w-[360px] lg:w-full max-w-[751px]   lg:h-[99%] overflow-y-scroll lg:overflow-hidden lg:max-h-[801px] min-[1200px]:max-h-max lg:px-[39px]  py-[28px]"
+          "w-[360px] lg:w-full max-w-[751px]   lg:h-[99%]  lg:overflow-hidden lg:max-h-[801px] min-[1200px]:max-h-max lg:px-[39px]  py-[28px]"
         }
         ${
           step === CANDIDATA_FORM_DATA.STEPS.JOB_SELECTION &&
@@ -462,6 +535,11 @@ export function CreateJobCandidateModal({
             showJobValidation={showJobValidation}
             exitCreateMode={exitCreateMode}
             mode={mode}
+            isJobValid={
+              isCreatingNewJob
+                ? !!(jobData.title?.trim() && jobData.description?.trim())
+                : !!jobData.selectedJobId
+            }
           />
         )}
 

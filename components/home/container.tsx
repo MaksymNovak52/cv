@@ -35,13 +35,13 @@ function VisibleCandidatesTracker({
 }: {
   totalCandidates: number;
 }) {
-  const [visibleCount, setVisibleCount] = useState(0);
+  const [seenCount, setSeenCount] = useState(0);
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const visibleRowsRef = useRef(new Set<number>());
+  const seenRowsRef = useRef(new Set<number>());
 
   useEffect(() => {
-    visibleRowsRef.current.clear();
-    setVisibleCount(0);
+    seenRowsRef.current.clear();
+    setSeenCount(0);
 
     observerRef.current = new IntersectionObserver(
       (entries) => {
@@ -51,12 +51,12 @@ function VisibleCandidatesTracker({
             10
           );
           if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
-            visibleRowsRef.current.add(rowIndex);
-          } else {
-            visibleRowsRef.current.delete(rowIndex);
+            if (!seenRowsRef.current.has(rowIndex)) {
+              seenRowsRef.current.add(rowIndex);
+              setSeenCount(seenRowsRef.current.size);
+            }
           }
         });
-        setVisibleCount(visibleRowsRef.current.size);
       },
       { threshold: 0.5, rootMargin: "0px" }
     );
@@ -74,7 +74,7 @@ function VisibleCandidatesTracker({
     <div className="w-[170px] h-[40px] bg-[#211C1A] fixed bottom-2 left-1/2 transform -translate-x-1/2 rounded-[4px] flex flex-col items-center justify-center ">
       <div className="flex flex-row items-center mb-1 gap-1">
         <p className="text-white text-[12px] font-bold leading-[-0.12px] ">
-          {visibleCount} out
+          {seenCount} out
         </p>
         <p className="text-[#D3D2D1] text-[12px] font-bold text-center leading-[-0.12px]">
           of {totalCandidates} left to view
@@ -86,7 +86,7 @@ function VisibleCandidatesTracker({
           style={{
             width:
               totalCandidates > 0
-                ? `${(visibleCount / totalCandidates) * 100}%`
+                ? `${(seenCount / totalCandidates) * 100}%`
                 : "0%",
           }}
         />
@@ -184,8 +184,8 @@ export function AllCandidatesList() {
   }
 
   return (
-    <main>
-      <div className="flex flex-row mt-6 max-w-[1416px] mx-auto gap-1">
+    <main className="overflow-hidden">
+      <div className="flex flex-row mt-6 lg:w-[1416px]   mx-auto gap-1 overflow-scroll  ">
         {!jobs?.length && (
           <section
             className={`flex flex-row justify-between items-center px-2 cursor-pointer transition-all duration-300`}
@@ -231,7 +231,7 @@ export function AllCandidatesList() {
       </div>
 
       <section
-        className={`max-w-[1416px] mx-2   p-8 lg:mx-auto bg-[#F3F2F1] min-h-[526px] min-[1400px]:max-h-screen relative 
+        className={`max-w-[1416px] mx-2   p-8 lg:mx-auto bg-[#F3F2F1] min-h-[526px] mb-10  relative 
         ${isMobile && "rounded-lg"}
           ${
             selectedJobId == null

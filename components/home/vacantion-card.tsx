@@ -33,7 +33,7 @@ export const Card = ({
       onClick={onClick}
       className={`
         relative cursor-pointer transition-all duration-300
-        w-[263px] h-[51px] rounded-t-lg hidden lg:block
+        w-[263px] h-[51px] rounded-t-lg hidden lg:block 
       `}
     >
       <div
@@ -52,7 +52,7 @@ export const Card = ({
         `}
       />
 
-      <div className="relative z-10 h-full px-4 flex items-center justify-between">
+      <div className="relative z-10 h-full px-4 flex items-center justify-between min-w-[260px]">
         <div className="flex items-center gap-4 min-w-0">
           <span className={`w-[7px] h-[7px] rounded-full ${dotsStyle}`} />
           <h4 className="text-[#211C1A] text-[14px] font-semibold truncate">
@@ -107,7 +107,7 @@ export function MobileJobSelect({
       className="
         hidden max-[450px]:flex
         items-center justify-between
-        w-[98%] h-[48px] rounded-[10px] bg-white shadow-sm px-3
+        w-[97%] h-[48px] rounded-[10px] bg-white shadow-sm px-3
         border border-[#ECEAE8] relative mx-auto mb-[6px]
       "
     >

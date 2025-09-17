@@ -1,4 +1,4 @@
-import { useUpdateJob } from "@/queries/candidates";
+import { usePendingCountsForAllJobs, useUpdateJob } from "@/queries/candidates";
 import { Job, JobFormData } from "@/type";
 import { useState } from "react";
 import { FormField, Input, TextArea } from "../form-items";
@@ -13,6 +13,7 @@ interface IJobSelectionBlockProps {
   showJobValidation: boolean;
   exitCreateMode: () => void;
   mode: string;
+  isJobValid?: boolean;
 }
 
 export function JobSelectionBlock({
@@ -25,9 +26,11 @@ export function JobSelectionBlock({
   handleNextToCandidateInfo,
   enterCreateMode,
   mode,
+  isJobValid,
 }: IJobSelectionBlockProps) {
   const [editingJobId, setEditingJobId] = useState<string | null>(null);
   const updateJobMutation = useUpdateJob();
+  const { data: pendingCounts = [] } = usePendingCountsForAllJobs();
 
   const handleEditClick = (job: Job) => {
     setEditingJobId(job.job_id);
@@ -55,11 +58,11 @@ export function JobSelectionBlock({
 
   return (
     <div className="space-y-2  ">
-      <h5 className="text-[40px] text-center pt-10 font-eb-garamond">
+      <h5 className="text-[34px]  lg:text-[40px] text-center pt-10 font-eb-garamond">
         Select or Create Job
       </h5>
 
-      <div className="flex flex-col items-center w-[280px] lg:w-[330px] mx-auto gap-1  ">
+      <div className="flex flex-col items-center w-[280px] lg:w-[330px] mx-auto gap-1 overflow-hidden  ">
         <FormField
           label={
             isCreatingNewJob
@@ -78,7 +81,7 @@ export function JobSelectionBlock({
         >
           {!isCreatingNewJob ? (
             <div className="flex flex-col gap-2 w-full ">
-              <div className="max-h-[160px]   overflow-auto pr-1 space-y-2">
+              <div className="max-h-[160px]   overflow-x-hidden overflow-y-scroll pr-1 space-y-2">
                 {(jobs ?? []).length === 0 && (
                   <div className="text-xs text-[#666] italic">
                     No vacancies yet.
@@ -87,10 +90,17 @@ export function JobSelectionBlock({
 
                 {jobs?.map((job) => {
                   const selected = jobData.selectedJobId === job.job_id;
+                  const count =
+                    pendingCounts?.find((c) => c.job_id === job.job_id)
+                      ?.pending_count ?? 0;
+
                   return (
                     <div
                       key={job.job_id}
-                      className="w-[90%] lg:w-[330px] h-[42px] border rounded-md flex items-center justify-between px-[14px] bg-[#FAFAFA] border-[#F0F0F0]"
+                      onClick={() =>
+                        updateJobData({ selectedJobId: job.job_id })
+                      }
+                      className="w-[90%] cursor-pointer lg:w-[330px] h-[42px] border rounded-md flex items-center justify-between px-[14px] bg-[#FAFAFA] border-[#F0F0F0]"
                     >
                       <label className="flex flex-row gap-2 items-center cursor-pointer">
                         <input
@@ -98,14 +108,11 @@ export function JobSelectionBlock({
                           name="job"
                           value={job.job_id}
                           checked={selected}
-                          onChange={() =>
-                            updateJobData({ selectedJobId: job.job_id })
-                          }
                           className="hidden"
                         />
                         <span
                           className={`h-[10px] w-[10px] rounded-full border ${
-                            selected
+                            count
                               ? "bg-emerald-500 border-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.25)]"
                               : "border-[#CFCFCF]"
                           }`}
@@ -115,7 +122,12 @@ export function JobSelectionBlock({
                         </span>
                       </label>
 
-                      <button onClick={() => handleEditClick(job)}>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditClick(job);
+                        }}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="14"
@@ -197,11 +209,18 @@ export function JobSelectionBlock({
           )}
           <button
             onClick={handleSave}
-            className={`px-4 py-2 bg-[#242537] text-white rounded-md ${
+            className={`px-4 py-2  text-white rounded-md ${
               !isCreatingNewJob
                 ? "lg:w-[330px]  w-[280px] mx-auto"
-                : "w-[100px] lg:w-[167px]"
-            }`}
+                : "w-[100px] lg:w-[167px] "
+            }
+            
+            ${
+              isJobValid || isCreatingNewJob || editingJobId != null
+                ? " bg-[#242537]"
+                : "bg-[#858588] backdrop-opacity-65"
+            }
+            `}
           >
             {editingJobId ? "Save" : "Next"}
           </button>

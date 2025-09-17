@@ -51,7 +51,7 @@ function VisibleCandidatesTracker({
   }, [totalCandidates]);
 
   return (
-    <div className="w-[170px] h-[40px] bg-[#211C1A] absolute bottom-2 left-1/2 transform -translate-x-1/2 rounded-[4px] flex flex-col items-center justify-center ">
+    <div className="w-[170px] h-[40px] bg-[#211C1A] fixed max-w- bottom-2 left-1/2 transform -translate-x-1/2 rounded-[4px] flex flex-col items-center justify-center ">
       <div className="flex flex-row items-center mb-1 gap-1">
         <p className="text-white text-[12px] font-bold leading-[-0.12px] ">
           {visibleCount} out

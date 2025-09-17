@@ -2,7 +2,11 @@ export function CandidateArrow({
   counts,
   goToPrevious,
   goToNext,
+  isBackBlock,
+  isNextBlock,
 }: {
+  isBackBlock: boolean;
+  isNextBlock: boolean;
   counts: number;
   goToPrevious: () => void;
   goToNext: () => void;
@@ -33,9 +37,11 @@ export function CandidateArrow({
   return (
     <>
       <span
-        className={`fixed top-1/2 right-[370px] z-10 translate-x-1/2 cursor-pointer translate-y-1/2 ${
+        className={`fixed top-1/2 right-[370px] z-10 translate-x-1/2 cursor-pointer translate-y-1/2  ${
           counts === 1 ? "hidden" : ""
-        }`}
+        }
+        ${!isNextBlock && "cursor-not-allowed opacity-50"}
+        `}
         onClick={handleClick(goToNext)}
         onMouseDown={(e) => e.preventDefault()}
         style={buttonStyle}
@@ -76,7 +82,9 @@ export function CandidateArrow({
       <span
         className={`fixed top-1/2 left-[330px] z-10 translate-x-1/2 cursor-pointer translate-y-1/2 ${
           counts === 1 ? "hidden" : ""
-        }`}
+        }
+           ${!isBackBlock && "cursor-not-allowed opacity-50"}
+        `}
         onClick={handleClick(goToPrevious)}
         onMouseDown={(e) => e.preventDefault()}
         style={buttonStyle}
