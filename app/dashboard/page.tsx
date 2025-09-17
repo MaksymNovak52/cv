@@ -16,6 +16,7 @@ export default function Dashboard() {
       <QueryClientProvider client={queryClient}>
         <HeaderContainer setIsAddModalOpen={setIsAddModalOpen} />
         <AllCandidatesList />
+
         {isAddModalOpen && (
           <CreateJobCandidateModal
             open={isAddModalOpen}

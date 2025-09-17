@@ -1,8 +1,10 @@
 "use client";
 import { useCandidatesContext } from "@/provider";
 import { useCounts } from "@/queries/candidates";
+import { getCurrentUser } from "@/service/user";
 import { Plus } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 export function HeaderContainer({
   setIsAddModalOpen,
 }: {
@@ -10,7 +12,17 @@ export function HeaderContainer({
 }) {
   const { jobCount, candidateCount } = useCandidatesContext();
   const { data, isLoading } = useCounts();
-
+  const [currentUser, setCurrentUser] = useState<{
+    id: string;
+    email: string;
+    is_admin: boolean;
+  } | null>(null);
+  useEffect(() => {
+    (async () => {
+      const profile = await getCurrentUser();
+      setCurrentUser(profile);
+    })();
+  }, []);
   return (
     <header className="py-[20px] px-[15px] lg:px-[32px] " style={{}}>
       <div className="max-w-[1416px] flex justify-between mx-auto">
@@ -66,26 +78,28 @@ export function HeaderContainer({
             </div>
           </div>
         </section>
-        <section className="flex flex-row gap-[6px]">
-          <span
-            className=" hidden lg:flex w-[146px] cursor-pointer h-[40px] rounded-[4px]  blur-[ 20px] text-[14px] font-semibold leading-[-0.14px] text-[#211C1A]  items-center justify-center"
-            style={{
-              background: "rgba(0, 0, 0, 0.04)",
-            }}
-            onClick={() => setIsAddModalOpen(true)}
-          >
-            [ <Plus size={18} color="#000000" /> ] Add Candidate
-          </span>
-          <span
-            className=" flex lg:hidden cursor-pointer h-[32px] sm:h-[40px] sm:px-[20px] px-[12px] py-[10px] rounded-[4px]  blur-[ 20px] text-[14px] font-semibold leading-[-0.14px] text-[#211C1A]  items-center justify-center"
-            style={{
-              background: "rgba(0, 0, 0, 0.04)",
-            }}
-            onClick={() => setIsAddModalOpen(true)}
-          >
-            [ <Plus size={18} color="#000000" /> ]
-          </span>
-        </section>
+        {currentUser?.is_admin && (
+          <section className="flex flex-row gap-[6px]">
+            <span
+              className=" hidden lg:flex w-[146px] cursor-pointer h-[40px] rounded-[4px]  blur-[ 20px] text-[14px] font-semibold leading-[-0.14px] text-[#211C1A]  items-center justify-center"
+              style={{
+                background: "rgba(0, 0, 0, 0.04)",
+              }}
+              onClick={() => setIsAddModalOpen(true)}
+            >
+              [ <Plus size={18} color="#000000" /> ] Add Candidate
+            </span>
+            <span
+              className=" flex lg:hidden cursor-pointer h-[32px] sm:h-[40px] sm:px-[20px] px-[12px] py-[10px] rounded-[4px]  blur-[ 20px] text-[14px] font-semibold leading-[-0.14px] text-[#211C1A]  items-center justify-center"
+              style={{
+                background: "rgba(0, 0, 0, 0.04)",
+              }}
+              onClick={() => setIsAddModalOpen(true)}
+            >
+              [ <Plus size={18} color="#000000" /> ]
+            </span>
+          </section>
+        )}
       </div>
     </header>
   );
