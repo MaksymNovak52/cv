@@ -514,7 +514,7 @@ export function CreateJobCandidateModal({
         }
         ${
           step === CANDIDATA_FORM_DATA.STEPS.JOB_SELECTION &&
-          " w-[360px] lg:w-[464px] h-[537px] pt-[28px] px-[50px] lg:px-[67px]"
+          " w-[360px] lg:w-[464px] h-[537px] pt-[28px] px-[50px] lg:px-[50px]"
         }
         ${
           step === CANDIDATA_FORM_DATA.STEPS.RM_OPINION &&
@@ -565,6 +565,7 @@ export function CreateJobCandidateModal({
             setStep={setStep}
             handleSubmit={handleSubmit}
             mutation={mutation}
+            isCreatingNewJob={mode !== "edit"}
           />
         )}
       </div>

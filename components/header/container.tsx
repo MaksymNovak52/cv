@@ -1,28 +1,16 @@
 "use client";
-import { useCandidatesContext } from "@/provider";
+import { useUser } from "@/provider";
 import { useCounts } from "@/queries/candidates";
-import { getCurrentUser } from "@/service/user";
 import { Plus } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 export function HeaderContainer({
   setIsAddModalOpen,
 }: {
   setIsAddModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { jobCount, candidateCount } = useCandidatesContext();
-  const { data, isLoading } = useCounts();
-  const [currentUser, setCurrentUser] = useState<{
-    id: string;
-    email: string;
-    is_admin: boolean;
-  } | null>(null);
-  useEffect(() => {
-    (async () => {
-      const profile = await getCurrentUser();
-      setCurrentUser(profile);
-    })();
-  }, []);
+  const { data } = useCounts();
+  const { isAdmin } = useUser();
+
   return (
     <header className="py-[20px] px-[15px] lg:px-[32px] " style={{}}>
       <div className="max-w-[1416px] flex justify-between mx-auto">
@@ -78,7 +66,7 @@ export function HeaderContainer({
             </div>
           </div>
         </section>
-        {currentUser?.is_admin && (
+        {isAdmin && (
           <section className="flex flex-row gap-[6px]">
             <span
               className=" hidden lg:flex w-[146px] cursor-pointer h-[40px] rounded-[4px]  blur-[ 20px] text-[14px] font-semibold leading-[-0.14px] text-[#211C1A]  items-center justify-center"

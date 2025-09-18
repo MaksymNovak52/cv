@@ -8,12 +8,14 @@ export function RmOpinionBlock({
   setStep,
   handleSubmit,
   mutation,
+  isCreatingNewJob,
 }: {
   mutation: any;
   handleSubmit: () => void;
   candidateData: CandidateFormData;
   updateCandidateData: (updates: Partial<CandidateFormData>) => void;
   setStep: (step: number) => void;
+  isCreatingNewJob: boolean;
 }) {
   return (
     <div className="space-y-2 w-[300px] lg:w-[464px]  h-[500px] mx-auto ">
@@ -73,7 +75,11 @@ export function RmOpinionBlock({
             disabled={mutation.isPending || !candidateData.opinion?.trim()}
             className="w-[167px] h-[40px] flex items-center justify-center bg-[#242537] text-white rounded-md disabled:opacity-50"
           >
-            {mutation.isPending ? "Saving..." : "Create"}
+            {mutation.isPending
+              ? "Saving..."
+              : isCreatingNewJob
+              ? "Create"
+              : "Save"}
           </button>
         </div>
       </div>

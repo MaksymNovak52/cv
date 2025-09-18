@@ -1,4 +1,3 @@
-import { useDeleteJob } from "@/queries/candidates";
 import Image from "next/image";
 import { useMemo } from "react";
 
@@ -23,13 +22,10 @@ export const Card = ({
   dotsStyle = "bg-[#259A6D]",
   badgeStyle = "text-white",
 }: CardProps) => {
-  const { mutate: deleteJob } = useDeleteJob();
-
   return (
     <section
       role="tab"
       aria-selected={isActive}
-      onDoubleClick={() => deleteJob(id)}
       onClick={onClick}
       className={`
         relative cursor-pointer transition-all duration-300

@@ -1,5 +1,6 @@
 "use client";
 import { truncateWords } from "@/lib/text";
+import { useUser } from "@/provider";
 import { useToggleFavorite } from "@/queries/candidates";
 import { CandidateRow } from "@/type";
 import Link from "next/link";
@@ -87,8 +88,7 @@ export function CandidatesList({
   candidatesByJob: CandidateRow[] | undefined;
 }) {
   const { mutate: toggleFav } = useToggleFavorite(selectedJobId);
-  const [selectedCandidate, setSelectedCandidate] =
-    useState<CandidateRow | null>(null);
+  const { isAdmin } = useUser();
 
   return (
     <>
@@ -101,27 +101,29 @@ export function CandidatesList({
             className="flex flex-col relative   justify-between  lg:w-[334px] p-[20px] bg-white rounded-[6px] border border-[#F5F5F5] cursor-pointer hover:shadow-md transition-shadow"
             onClick={() => handleCandidateClick(candidate)}
           >
-            <button
-              className="p-[6px]   hover:bg-gray-100 rounded-md transition-colors absolute right-[48px] top-[10px] "
-              onClick={(e) => {
-                e.stopPropagation();
-                onEditCandidate(candidate);
-              }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="22"
-                height="22"
-                viewBox="0 0 22 22"
-                fill="none"
+            {isAdmin && (
+              <button
+                className="p-[6px]   hover:bg-gray-100 rounded-md transition-colors absolute right-[48px] top-[10px] "
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEditCandidate(candidate);
+                }}
               >
-                <path
-                  d="M14.4375 2.53479C14.7524 2.53479 15.0546 2.65975 15.2773 2.88245L19.1172 6.72327C19.3397 6.94587 19.4647 7.24738 19.4648 7.56213C19.4648 7.87708 19.3399 8.17928 19.1172 8.40198L8.45703 19.0621H4.125C3.81006 19.0621 3.50786 18.9372 3.28516 18.7145C3.06258 18.4918 2.9375 18.1895 2.9375 17.8746V14.0348C2.9375 13.8789 2.96868 13.7247 3.02832 13.5807C3.088 13.4366 3.17489 13.3052 3.28516 13.1949L13.5977 2.88245C13.8204 2.65975 14.1226 2.53479 14.4375 2.53479Z"
-                  stroke="#211C1A"
-                />
-                <path d="M11.6875 5.5L16.5 10.3125" stroke="#211C1A" />
-              </svg>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="22"
+                  height="22"
+                  viewBox="0 0 22 22"
+                  fill="none"
+                >
+                  <path
+                    d="M14.4375 2.53479C14.7524 2.53479 15.0546 2.65975 15.2773 2.88245L19.1172 6.72327C19.3397 6.94587 19.4647 7.24738 19.4648 7.56213C19.4648 7.87708 19.3399 8.17928 19.1172 8.40198L8.45703 19.0621H4.125C3.81006 19.0621 3.50786 18.9372 3.28516 18.7145C3.06258 18.4918 2.9375 18.1895 2.9375 17.8746V14.0348C2.9375 13.8789 2.96868 13.7247 3.02832 13.5807C3.088 13.4366 3.17489 13.3052 3.28516 13.1949L13.5977 2.88245C13.8204 2.65975 14.1226 2.53479 14.4375 2.53479Z"
+                    stroke="#211C1A"
+                  />
+                  <path d="M11.6875 5.5L16.5 10.3125" stroke="#211C1A" />
+                </svg>
+              </button>
+            )}
             <button
               className="p-2 hover:bg-gray-100 rounded-md transition-colors absolute right-[13px] top-[10px] z-10"
               onClick={(e) => {
@@ -168,19 +170,21 @@ export function CandidatesList({
                     : candidate.current_title}
                 </p>
                 <div className="flex items-center gap-3">
+                  {candidate.portfolio_url && (
+                    <Link
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={candidate.portfolio_url || ""}
+                      className="text-[12px] text-[#211C1A] font-bold hover:text-gray-900 underline leading-[-0.12px]"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Portfolio
+                    </Link>
+                  )}
                   <Link
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={candidate.portfolio_url || ""}
-                    className="text-[12px] text-[#211C1A] font-bold hover:text-gray-900 underline leading-[-0.12px]"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    Portfolio
-                  </Link>
-                  <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={candidate.cv_url || ""}
+                    href={candidate.linkedin_url || ""}
                     className="text-[12px] text-[#211C1A] font-bold hover:text-gray-900 underline leading-[-0.12px]"
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -277,9 +281,11 @@ export function CandidatesList({
                     /month
                   </span>
                 </div>
-                <p className="text-[12px] text-[#A6A4A3] font-bold">
-                  +Equity Package
-                </p>
+                {candidate.has_equity && (
+                  <p className="text-[12px] text-[#A6A4A3] font-semibold">
+                    +Equity Package
+                  </p>
+                )}
               </div>
 
               <div className="mt-auto">

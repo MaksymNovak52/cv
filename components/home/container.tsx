@@ -151,7 +151,7 @@ export function AllCandidatesList() {
   const filteredCandidates = useMemo(() => {
     return candidatesByJob.filter((cand) => {
       const status =
-        (cand as any).status ??
+        cand.status ??
         (cand as any).status_name ??
         (cand as any).current_status_name ??
         "";
@@ -185,7 +185,7 @@ export function AllCandidatesList() {
 
   return (
     <main className="overflow-hidden">
-      <div className="flex flex-row mt-6 lg:w-[1416px]   mx-auto gap-1 overflow-scroll  ">
+      <div className="flex flex-row mt-6 lg:w-[1416px]   mx-auto gap-1 overflow-x-scroll  ">
         {!jobs?.length && (
           <section
             className={`flex flex-row justify-between items-center px-2 cursor-pointer transition-all duration-300`}
