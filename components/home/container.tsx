@@ -1,6 +1,7 @@
 "use client";
 
 import { useIsMobile } from "@/hooks";
+import { normalizeToTab } from "@/lib/candidate";
 import { useCandidatesContext } from "@/provider";
 import {
   useCandidatesByJob,
@@ -9,7 +10,7 @@ import {
   useJobs,
   usePendingCountsForAllJobs,
 } from "@/queries/candidates";
-import { CandidateRow, Job } from "@/type";
+import { CandidateRow, Job, TabKey } from "@/type";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CustomTabs, Dotbage, GridViewContainer } from "../ui";
 import { CreateJobCandidateModal } from "./candidat-form/container";
@@ -17,18 +18,6 @@ import { CandidatesList } from "./list";
 import { CandidateModal } from "./modal";
 import { CandidatesTable } from "./table";
 import { Card, JobOption, MobileJobSelect } from "./vacantion-card";
-
-type TabKey = "new" | "interview" | "not-sure" | "reject";
-
-function normalizeToTab(statusRaw?: string | null): TabKey {
-  const s = (statusRaw || "").trim().toLowerCase();
-  if (!s) return "new";
-  if (/(reject|rejected|declin)/.test(s)) return "reject";
-  if (/(hold|not[\s_-]?sure)/.test(s)) return "not-sure";
-  if (/interview/.test(s)) return "interview";
-  if (/(new|pending|applied|submitted)/.test(s)) return "new";
-  return "new";
-}
 
 function VisibleCandidatesTracker({
   totalCandidates,

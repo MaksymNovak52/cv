@@ -60,4 +60,13 @@ interface JobFormData {
   description: string;
   selectedJobId: string | null;
 }
-export type { CandidateFormData, CandidateRow, FormErrors, Job, JobFormData };
+type TabKey = "new" | "interview" | "not-sure" | "reject";
+
+export type {
+  CandidateFormData,
+  CandidateRow,
+  FormErrors,
+  Job,
+  JobFormData,
+  TabKey,
+};

@@ -17,20 +17,6 @@ export function SignInContainer() {
 
   const router = useRouter();
 
-  const validateEmail = (value: string) => {
-    const v = value.trim();
-    if (!v) return "Email is required";
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-    if (!re.test(v)) return "Invalid email";
-    return "";
-  };
-
-  const validatePassword = (value: string) => {
-    if (!value) return "Password is required";
-    if (value.length < 6) return "Password must be at least 6 characters";
-    return "";
-  };
-
   const validateForm = () => {
     const emailErr = validateEmail(email);
     const passErr = validatePassword(password);
