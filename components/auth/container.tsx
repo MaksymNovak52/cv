@@ -1,4 +1,5 @@
 "use client";
+import { validateEmail, validatePassword } from "@/lib/candidate";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
