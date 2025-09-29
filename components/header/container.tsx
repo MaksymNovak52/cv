@@ -1,16 +1,24 @@
 "use client";
 import { useUser } from "@/provider";
-import { useCounts } from "@/queries/candidates";
+import { useCountsByOrganization } from "@/queries/candidates";
+import Cookies from "js-cookie";
 import { Plus } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+
 export function HeaderContainer({
   setIsAddModalOpen,
 }: {
   setIsAddModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { data } = useCounts();
-  const { isAdmin } = useUser();
-
+  const router = useRouter();
+  const { isAdmin, organization } = useUser();
+  const orgFromCookie = Cookies.get("organizationId");
+  const { data } = useCountsByOrganization(orgFromCookie as string);
+  const handleChangeOrganization = () => {
+    Cookies.remove("organizationId");
+    router.push("/select-organization");
+  };
   return (
     <header className="py-[20px] px-[15px] lg:px-[32px] " style={{}}>
       <div className="max-w-[1416px] flex justify-between mx-auto">
@@ -52,9 +60,18 @@ export function HeaderContainer({
               />
             </svg>
             <div className="flex flex-col items-start gap">
-              <h3 className="text-[#211C1A] text-[14px] lg:text-base font-bold">
-                Nexus Protocol
-              </h3>
+              <div className="flex flex-row gap-2">
+                <h3 className="text-[#211C1A] text-[14px] lg:text-base font-bold">
+                  {organization}
+                </h3>
+                <button
+                  onClick={(e) => {
+                    handleChangeOrganization();
+                  }}
+                >
+                  ✏️
+                </button>
+              </div>
               <div className="flex flex-row  items-center gap-2 text-[#857F78] text-[10px] font-bold uppercase">
                 <p>{data?.total_candidates} new candidates</p>
                 <p>/</p>

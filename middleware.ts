@@ -1,29 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-
   const token = req.cookies.get("sb-access-token");
+  const orgId = req.cookies.get("organizationId");
 
   const { pathname } = req.nextUrl;
 
   const publicRoutes = ["/sign-in", "/register"];
-  const privateRoutes = ["/dashboard", "/settings"];
+  const selectOrganizationRoute = "/select-organization";
 
   const isPublicRoute = publicRoutes.includes(pathname);
-  const isPrivateRoute = privateRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
+  const isSelectOrgRoute = pathname.startsWith(selectOrganizationRoute);
+  const isPrivateRoute =
+    pathname.startsWith("/dashboard") || pathname.startsWith("/settings");
 
-  if (!token && isPrivateRoute) {
+  if (!token && (isPrivateRoute || isSelectOrgRoute)) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 
-  if (token && pathname === "/sign-in") {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+  if (token && !orgId && isPrivateRoute) {
+    return NextResponse.redirect(new URL(selectOrganizationRoute, req.url));
   }
 
-  return res;
+  if (token && pathname === "/sign-in") {
+    if (orgId) {
+      return NextResponse.redirect(new URL(`/dashboard/${orgId}`, req.url));
+    }
+    return NextResponse.redirect(new URL(selectOrganizationRoute, req.url));
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {

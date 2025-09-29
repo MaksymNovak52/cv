@@ -28,6 +28,27 @@ export const fetchAllJobs = async () => {
   }
   return data;
 };
+export const fetchOrganizationById = async (organizationId: string) => {
+  const { data, error } = await supabase.rpc("get_organization_by_id", {
+    _organization_id: organizationId,
+  });
+  if (error) throw new Error(error.message);
+  return data?.[0] ?? null;
+};
+
+export const fetchAllOrganizations = async () => {
+  const { data, error } = await supabase.rpc("get_all_organizations");
+  if (error) throw new Error(error.message);
+  return data;
+};
+
+export const fetchJobsByOrganization = async (organizationId: string) => {
+  const { data, error } = await supabase.rpc("get_all_jobs_by_organization", {
+    _organization_id: organizationId,
+  });
+  if (error) throw new Error(error.message);
+  return data;
+};
 
 export const fetchCandidatesByJob = async (
   jobId: string
@@ -109,6 +130,36 @@ export const fetchCounts = async (): Promise<{
 
   return data?.[0] ?? { total_candidates: 0, total_jobs: 0 };
 };
+
+export const createOrganization = async (name: string) => {
+  const { data, error } = await supabase.rpc("create_organization", {
+    _name: name,
+  });
+  if (error) throw error;
+  return data;
+};
+
+export const updateOrganization = async (id: string, name: string) => {
+  const { error } = await supabase.rpc("update_organization", {
+    _id: id,
+    _name: name,
+  });
+  if (error) throw error;
+};
+
+export const deleteOrganization = async (id: string) => {
+  const { error } = await supabase.rpc("delete_organization", { _id: id });
+  if (error) throw error;
+};
+
+export const fetchCountsByOrganization = async (organizationId: string) => {
+  const { data, error } = await supabase.rpc("total_candidates", {
+    _organization_id: organizationId,
+  });
+  if (error) throw new Error(error.message);
+  return data?.[0] ?? { total_candidates: 0, total_jobs: 0 };
+};
+
 export interface CreateJobWithCandidateInput {
   organizationId: string;
   jobId?: string | null;

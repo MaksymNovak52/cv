@@ -5,10 +5,11 @@ import { useFormData, useLockBodyScroll } from "@/hooks";
 import { useUrlValidation } from "@/hooks/useUrlValidation";
 import {
   useCreateJobWithCandidate,
-  useJobs,
+  useJobsByOrganization,
   useUpdateCandidateWithApplication,
 } from "@/queries/candidates";
 import { CandidateFormData, CandidateRow, FormErrors } from "@/type";
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import {
   CloseButton,
@@ -272,8 +273,9 @@ export function CreateJobCandidateModal({
   const [showValidationErrors, setShowValidationErrors] = useState(false);
   const [showJobValidation, setShowJobValidation] = useState(false);
   const [isCreatingNewJob, setIsCreatingNewJob] = useState(false);
+  const orgId = Cookies.get("organizationId");
 
-  const { data: jobs } = useJobs();
+  const { data: jobs } = useJobsByOrganization(orgId as string);
   const mutation = useCreateJobWithCandidate();
   const createMutation = useCreateJobWithCandidate();
   const updateMutation = useUpdateCandidateWithApplication();
@@ -379,7 +381,7 @@ export function CreateJobCandidateModal({
       : [];
 
     const payload = {
-      organizationId: CANDIDATA_FORM_DATA.ORGANIZATION_ID,
+      organizationId: orgId as string,
       opinion: candidateData.opinion || "",
       candidate: {
         name: candidateData.name || "",

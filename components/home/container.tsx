@@ -7,10 +7,11 @@ import {
   useCandidatesByJob,
   useFavoritesCount,
   useJobDetails,
-  useJobs,
+  useJobsByOrganization,
   usePendingCountsForAllJobs,
 } from "@/queries/candidates";
 import { CandidateRow, Job, TabKey } from "@/type";
+import Cookies from "js-cookie";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CustomTabs, Dotbage, GridViewContainer } from "../ui";
 import { CreateJobCandidateModal } from "./candidat-form/container";
@@ -107,7 +108,10 @@ export function AllCandidatesList() {
     setViewMode,
   } = useCandidatesContext();
 
-  const { data: jobs, isLoading: jobsLoading } = useJobs();
+  const orgId = Cookies.get("organizationId");
+  const { data: jobs, isLoading: jobsLoading } = useJobsByOrganization(
+    orgId as string
+  );
   const { data: jobDetails } = useJobDetails((selectedJobId || "") as string);
   const { data: candidatesByJob = [] } = useCandidatesByJob(
     (selectedJobId || "") as string
@@ -168,16 +172,12 @@ export function AllCandidatesList() {
     setIsEditModalOpen(true);
   };
 
-  if (jobsLoading) {
-    return <p className="text-center mt-10 h-screen">Loading jobs...</p>;
-  }
-
   return (
     <main className="overflow-hidden">
       <div className="flex flex-row mt-6 lg:w-[1416px]   mx-auto gap-1 overflow-x-scroll  ">
         {!jobs?.length && (
           <section
-            className={`flex flex-row justify-between items-center px-2 cursor-pointer transition-all duration-300`}
+            className={`flex w-[140px] flex-row justify-between items-center px-2 cursor-pointer transition-all duration-300`}
           >
             <div
               className={`flex flex-row justify-between flex-1 items-center bg-white h-[42px] rounded-lg px-2`}

@@ -10,6 +10,9 @@ import React, {
   useState,
 } from "react";
 
+import { fetchOrganizationById } from "@/service";
+import Cookies from "js-cookie";
+
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const useUser = () => {
@@ -27,6 +30,7 @@ interface UserProviderProps {
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [organization, setOrganizationState] = useState<string | null>(null);
 
   const loadUser = async () => {
     try {
@@ -47,7 +51,20 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   useEffect(() => {
     loadUser();
+
+    const orgFromCookie = Cookies.get("organizationId");
+    const getCandidates = async () => {
+      const candidates = await fetchOrganizationById(orgFromCookie as string);
+      setOrganizationState(candidates.name);
+    };
+    if (orgFromCookie) {
+      getCandidates();
+    }
   }, []);
+
+  const setOrganization = (orgId: string | null) => {
+    setOrganizationState(orgId);
+  };
 
   const isAdmin = user?.is_admin ?? false;
 
@@ -57,6 +74,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     setUser,
     refreshUser,
     isAdmin,
+    organization,
+    setOrganization,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

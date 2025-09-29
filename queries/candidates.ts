@@ -2,18 +2,24 @@ import { supabase } from "@/lib/supabase";
 import {
   countFavorites,
   createJobWithCandidate,
+  createOrganization,
   deleteJobAndRelated,
+  deleteOrganization,
   fetchAllJobs,
+  fetchAllOrganizations,
   fetchCandidateById,
   fetchCandidatesByJob,
-  fetchCounts,
+  fetchCountsByOrganization,
   fetchJobDetails,
+  fetchJobsByOrganization,
+  fetchOrganizationById,
   fetchPendingCandidatesByJob,
   fetchPendingCountsForAllJobs,
   removeCandidateFromJob,
   toggleFavorite,
   updateApplicationStatusByName,
   updateJob,
+  updateOrganization,
 } from "@/service";
 import { CandidateRow } from "@/type";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -26,10 +32,63 @@ export const useJobDetails = (jobId: string) => {
   });
 };
 
+export const useOrganizations = () => {
+  return useQuery({
+    queryKey: ["organizations"],
+    queryFn: fetchAllOrganizations,
+  });
+};
+export const useOrganization = (organizationId: string | null) => {
+  return useQuery({
+    queryKey: ["organization", organizationId],
+    queryFn: () => fetchOrganizationById(organizationId as string),
+    enabled: !!organizationId,
+  });
+};
+
+export const useJobsByOrganization = (organizationId: string | null) => {
+  return useQuery({
+    queryKey: ["jobs", organizationId],
+    queryFn: () => fetchJobsByOrganization(organizationId as string),
+    enabled: !!organizationId,
+  });
+};
+
 export const useJobs = () => {
   return useQuery({
     queryKey: ["jobs"],
     queryFn: fetchAllJobs,
+  });
+};
+
+export const useCreateOrganization = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (name: string) => createOrganization(name),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["organizations"] });
+    },
+  });
+};
+
+export const useUpdateOrganization = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, name }: { id: string; name: string }) =>
+      updateOrganization(id, name),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["organizations"] });
+    },
+  });
+};
+
+export const useDeleteOrganization = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteOrganization(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["organizations"] });
+    },
   });
 };
 
@@ -69,12 +128,14 @@ export const useCandidateById = (candidateId: string | null) => {
   });
 };
 
-export const useCounts = () => {
+export const useCountsByOrganization = (organizationId: string | null) => {
   return useQuery({
-    queryKey: ["counts"],
-    queryFn: fetchCounts,
+    queryKey: ["counts", organizationId],
+    queryFn: () => fetchCountsByOrganization(organizationId as string),
+    enabled: !!organizationId,
   });
 };
+
 export const useCreateJobWithCandidate = () => {
   const queryClient = useQueryClient();
 
@@ -109,6 +170,7 @@ export const useCreateJobWithCandidate = () => {
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
       queryClient.invalidateQueries({ queryKey: ["pendingCounts"] });
       queryClient.invalidateQueries({ queryKey: ["candidates"] });
+      queryClient.invalidateQueries({ queryKey: ["counts"] });
     },
   });
 };
@@ -151,7 +213,8 @@ export const useUpdateApplicationStatus = (jobId?: string) => {
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["candidates"] });
-      queryClient.invalidateQueries({ queryKey: ["pendingCounts"] });
+      queryClient.invalidateQueries({ queryKey: ["counts"] });
+
       queryClient.invalidateQueries({ queryKey: ["favoritesCount", jobId] });
     },
   });
