@@ -131,24 +131,35 @@ export const fetchCounts = async (): Promise<{
   return data?.[0] ?? { total_candidates: 0, total_jobs: 0 };
 };
 
-export const createOrganization = async (name: string) => {
+export const createOrganization = async (name: string, logoUrl?: string) => {
   const { data, error } = await supabase.rpc("create_organization", {
     _name: name,
+    _logo_url: logoUrl,
   });
   if (error) throw error;
   return data;
 };
 
-export const updateOrganization = async (id: string, name: string) => {
-  const { error } = await supabase.rpc("update_organization", {
-    _id: id,
-    _name: name,
+export const updateOrganization = async (
+  id: string,
+  name: string,
+  logoUrl?: string
+) => {
+  const { data, error } = await supabase.rpc("update_organization", {
+    _id: "643b2c43-cb3f-4620-89c7-d2fc8b2faad6",
+    _name: name || null,
+    _logo_url: logoUrl || null,
+    _bucket_url: null,
   });
+
   if (error) throw error;
+  return data;
 };
 
 export const deleteOrganization = async (id: string) => {
-  const { error } = await supabase.rpc("delete_organization", { _id: id });
+  const { error } = await supabase.rpc("delete_organization", {
+    _id: id,
+  });
   if (error) throw error;
 };
 

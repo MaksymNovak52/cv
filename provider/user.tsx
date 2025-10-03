@@ -53,12 +53,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     loadUser();
 
     const orgFromCookie = Cookies.get("organizationId");
-    const getCandidates = async () => {
+    const getOrganization = async () => {
       const candidates = await fetchOrganizationById(orgFromCookie as string);
       setOrganizationState(candidates.name);
     };
     if (orgFromCookie) {
-      getCandidates();
+      getOrganization();
     }
   }, []);
 
@@ -76,6 +76,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     isAdmin,
     organization,
     setOrganization,
+    logoUrl: null,
+    setLogoUrl: function (logoUrl: string | null): void {
+      throw new Error("Function not implemented.");
+    },
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

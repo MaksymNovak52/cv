@@ -6,6 +6,8 @@ interface User {
 
 interface UserContextType {
   user: User | null;
+  logoUrl: string | null;
+  setLogoUrl: (logoUrl: string | null) => void;
   isLoading: boolean;
   organization: string | null;
   setOrganization: (organization: string | null) => void;

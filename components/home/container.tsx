@@ -2,7 +2,7 @@
 
 import { useIsMobile } from "@/hooks";
 import { normalizeToTab } from "@/lib/candidate";
-import { useCandidatesContext } from "@/provider";
+import { useCandidatesContext, useUser } from "@/provider";
 import {
   useCandidatesByJob,
   useFavoritesCount,
@@ -92,10 +92,10 @@ export function AllCandidatesList() {
   const [editApplicationId, setEditApplicationId] = useState<
     string | undefined
   >(undefined);
-
+  const { isAdmin } = useUser();
   const [activeTab, setActiveTab] = useState<TabKey>("new");
   const [isStickyBtn, setIsStickyBtn] = useState(false);
-
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const {
     selectedJobId,
     setSelectedJobId,
@@ -128,7 +128,7 @@ export function AllCandidatesList() {
     let c = { new: 0, interview: 0, notSure: 0, reject: 0 };
     for (const cand of candidatesByJob) {
       const status =
-        (cand as any).status ??
+        cand.status ??
         (cand as any).status_name ??
         (cand as any).current_status_name ??
         "";
@@ -142,7 +142,7 @@ export function AllCandidatesList() {
   }, [candidatesByJob]);
 
   const filteredCandidates = useMemo(() => {
-    return candidatesByJob.filter((cand) => {
+    let list = candidatesByJob.filter((cand) => {
       const status =
         cand.status ??
         (cand as any).status_name ??
@@ -150,7 +150,13 @@ export function AllCandidatesList() {
         "";
       return normalizeToTab(status) === activeTab;
     });
-  }, [candidatesByJob, activeTab]);
+
+    if (showFavoritesOnly) {
+      list = list.filter((cand) => cand.is_favorite === true); // 👈 фільтр тільки favorites
+    }
+
+    return list;
+  }, [candidatesByJob, activeTab, showFavoritesOnly]);
 
   useEffect(() => {
     if ((!selectedJobId && jobs?.[0]?.job_id) || jobs?.length === 1) {
@@ -241,17 +247,24 @@ export function AllCandidatesList() {
           </div>
 
           <div className="flex flex-row items-start mt-10 sm:mt-0 justify-start gap-2 ">
-            <button className="w-[104px] lg:w-[146px] h-[40px] gap-1 rounded-[4px] border flex items-center justify-center border-[#E0DFDD] text-[14px] font-semibold text-[#211C1A] ">
-              <p className="hidden lg:block">[{favoritesCount}]</p>
+            <button
+              className={`w-[104px] lg:w-[146px] h-[40px] ${
+                showFavoritesOnly && "bg-[#cdcccc]"
+              } transition-all duration-300 gap-1 rounded-[4px] border flex items-center justify-center border-[#E0DFDD] text-[14px] font-semibold text-[#211C1A]`}
+              onClick={() => setShowFavoritesOnly((prev) => !prev)}
+            >
+              <p className="hidden lg:block">[{favoritesCount || 0}]</p>
               Favorites
             </button>
-            <button
-              className="w-[104px] lg:w-[129px] h-[40px] flex items-center justify-center gap-1 bg-[#597D9B] text-[14px] font-bold rounded-[4px] text-white"
-              onClick={() => setIsCreateModalOpen(true)}
-            >
-              <p className="hidden lg:block">[V]</p>
-              Vacancy
-            </button>
+            {isAdmin && (
+              <button
+                className="w-[104px] lg:w-[129px] h-[40px] flex items-center justify-center gap-1 bg-[#597D9B] text-[14px] font-bold rounded-[4px] text-white"
+                onClick={() => setIsCreateModalOpen(true)}
+              >
+                <p className="hidden lg:block">[V]</p>
+                Vacancy
+              </button>
+            )}
           </div>
         </div>
 

@@ -10,8 +10,8 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <UserProvider>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </UserProvider>
+    <QueryClientProvider client={queryClient}>
+      <UserProvider>{children}</UserProvider>
+    </QueryClientProvider>
   );
 }

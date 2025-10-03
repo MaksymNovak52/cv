@@ -1,10 +1,10 @@
 "use client";
 import { validateEmail, validatePassword } from "@/lib/candidate";
 import { supabase } from "@/lib/supabase";
+import Cookies from "js-cookie";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
 export function SignInContainer() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -61,10 +61,42 @@ export function SignInContainer() {
       return;
     }
 
-    document.cookie = `sb-access-token=${data?.session?.access_token}; path=/; secure; samesite=Lax`;
+    const session = data?.session;
+    document.cookie = `sb-access-token=${session?.access_token}; path=/; secure; samesite=Lax`;
+
+    const { data: userData, error: userErr } = await supabase
+      .from("users")
+      .select("id, email, is_admin")
+      .eq("email", email.trim())
+      .single();
+
+    if (userErr || !userData) {
+      setErrorMsg("User not found");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (userData.is_admin) {
+      router.push("/select-organization");
+    } else {
+      const { data: orgUsers, error: orgErr } = await supabase
+        .from("organization_users")
+        .select("organization_id")
+        .eq("user_id", userData.id);
+
+      if (orgErr || !orgUsers || orgUsers.length === 0) {
+        setErrorMsg("No organization assigned to this user");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const orgId = orgUsers[0].organization_id;
+      Cookies.set("organizationId", orgId);
+
+      router.push("/dashboard");
+    }
 
     setIsSubmitting(false);
-    router.push("/dashboard");
   };
 
   const canSubmit =

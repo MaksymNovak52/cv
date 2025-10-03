@@ -64,7 +64,8 @@ export const useJobs = () => {
 export const useCreateOrganization = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (name: string) => createOrganization(name),
+    mutationFn: ({ name, logoUrl }: { name: string; logoUrl?: string }) =>
+      createOrganization(name, logoUrl),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["organizations"] });
     },
@@ -74,10 +75,18 @@ export const useCreateOrganization = () => {
 export const useUpdateOrganization = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, name }: { id: string; name: string }) =>
-      updateOrganization(id, name),
-    onSuccess: () => {
+    mutationFn: ({
+      id,
+      name,
+      logoUrl,
+    }: {
+      id: string;
+      name: string;
+      logoUrl?: string;
+    }) => updateOrganization(id, name, logoUrl),
+    onSuccess: (_data, vars) => {
       qc.invalidateQueries({ queryKey: ["organizations"] });
+      qc.invalidateQueries({ queryKey: ["organization", vars.id] });
     },
   });
 };

@@ -117,7 +117,7 @@ export function JobSelectionBlock({
                         />
                         <span
                           className={`h-[10px] w-[10px] rounded-full border ${
-                            count
+                            selected
                               ? "bg-emerald-500 border-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.25)]"
                               : "border-[#CFCFCF]"
                           }`}
