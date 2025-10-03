@@ -24,7 +24,7 @@ export async function middleware(req: NextRequest) {
 
   if (token && pathname === "/sign-in") {
     if (orgId) {
-      return NextResponse.redirect(new URL(`/dashboard/${orgId}`, req.url));
+      return NextResponse.redirect(new URL(`/dashboard`, req.url));
     }
     return NextResponse.redirect(new URL(selectOrganizationRoute, req.url));
   }
