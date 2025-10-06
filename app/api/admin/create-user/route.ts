@@ -27,6 +27,7 @@ export async function POST(req: Request) {
       });
 
     let userId = data?.user?.id;
+    let isNewUser = true;
 
     if (userError?.message?.includes("already registered") || !userId) {
       console.warn("⚠️ User already exists, fetching ID...");
@@ -50,6 +51,7 @@ export async function POST(req: Request) {
         );
       }
       userId = existing.id;
+      isNewUser = false;
     }
 
     const { error: linkError } = await supabaseAdmin
@@ -57,6 +59,8 @@ export async function POST(req: Request) {
       .insert({
         organization_id: organizationId,
         user_id: userId,
+        email,
+        password: isNewUser ? password : null,
       });
 
     if (linkError) {
@@ -66,7 +70,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       email,
-      password: data?.user ? password : undefined,
+      password: isNewUser ? password : undefined,
     });
   } catch (err: any) {
     console.error("Server error:", err);

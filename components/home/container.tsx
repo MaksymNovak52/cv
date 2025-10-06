@@ -152,7 +152,7 @@ export function AllCandidatesList() {
     });
 
     if (showFavoritesOnly) {
-      list = list.filter((cand) => cand.is_favorite === true); // 👈 фільтр тільки favorites
+      list = list.filter((cand) => cand.is_favorite === true);
     }
 
     return list;
@@ -180,7 +180,7 @@ export function AllCandidatesList() {
 
   return (
     <main className="overflow-hidden">
-      <div className="flex flex-row mt-6 lg:w-[1416px]   mx-auto gap-1 overflow-x-scroll  ">
+      <div className="flex flex-row mt-6 lg:w-[1416px] mx-auto gap-1 overflow-x-scroll scrollbar-hide">
         {!jobs?.length && (
           <section
             className={`flex w-[140px] flex-row justify-between items-center px-2 cursor-pointer transition-all duration-300`}

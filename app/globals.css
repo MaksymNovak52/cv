@@ -6,10 +6,14 @@ body {
   color: var(--foreground);
   box-sizing: border-box;
   font-family: var(--font-eb-miriamLibre), serif;
+  .scrollable-element::-webkit-scrollbar {
+    display: none;
+  }
 }
 .font-eb-garamond {
   font-family: var(--font-eb-garamond);
 }
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
