@@ -9,7 +9,7 @@ export function RmOpinion({ opinion }: { opinion: string }) {
         <div className="w-[115px] lg:w-[216px] h-[1px] border-t border-dashed border-[#E5E5E5]"></div>
       </div>
       <p className="text-[#615D5C] text-center text-[12px] font-bold leading-[-0.12px]">
-        {opinion || "No opinion"}
+        {opinion ? opinion.replace(/[{}"']/g, "") : "No opinion"}
       </p>
     </div>
   );

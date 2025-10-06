@@ -32,8 +32,9 @@ export function RightAsside({ candidate }: { candidate: CandidateRow }) {
           }}
         >
           {" "}
-          {candidate.requirements ||
-            "	•	7+ years of experience in React Native and mobile development Has shipped apps to App Store & Google Play and also has experience with automated pipelines (App Center, GitHub/GitLab CI/CD, CodePush) Worked on hardware-integrated apps (Bluetooth mask device) and optimized native code Has been working with advanced animations & gesture handling (Reanimated, parallel native threads) Has been in collaboration with designers, backend, QA, PMs in a cross-functional setup, comfortable working in startup environment"}{" "}
+          {candidate.requirements
+            ? candidate.requirements.replace(/[{}"']/g, "")
+            : "	•	7+ years of experience in React Native and mobile development Has shipped apps to App Store & Google Play and also has experience with automated pipelines (App Center, GitHub/GitLab CI/CD, CodePush) Worked on hardware-integrated apps (Bluetooth mask device) and optimized native code Has been working with advanced animations & gesture handling (Reanimated, parallel native threads) Has been in collaboration with designers, backend, QA, PMs in a cross-functional setup, comfortable working in startup environment"}{" "}
         </p>
       </div>
     </div>

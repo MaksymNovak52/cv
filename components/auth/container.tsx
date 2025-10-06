@@ -348,7 +348,7 @@ export function SignInContainer() {
           <div className="flex items-center justify-center w-[330px]  pt-[17px] mx-auto">
             <p className="text-[10px] font-bold uppercase text-[#FF3636]  text-center ">
               You’re trying to log in with credentials that are no longer valid.
-              Please contact your manager to get current access.
+              Please contact Mirela to get current access.
             </p>
           </div>
         )}
