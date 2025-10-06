@@ -2,6 +2,7 @@
 const nextConfig = {
   images: {
     domains: ["xenhijqquxadvbummbey.supabase.co"],
+    exportTrailingSlash: true,
   },
 };
 
