@@ -105,7 +105,12 @@ export function SignInContainer() {
   return (
     <div
       className="h-screen leading-[-0.14px]"
-      style={{ backgroundImage: "url('/signInLogo.png')" }}
+      style={{
+        backgroundImage: "url('/signInLogo.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
     >
       <Image
         src="/singInUpLogo.png"
