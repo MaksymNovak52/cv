@@ -62,7 +62,7 @@ export function HeaderContainer({
                 <img
                   src={"./logo.png"}
                   alt="logo"
-                  className="max-w-[45px] max-h-[45px] w-auto h-auto object-contain"
+                  className="w-[40px] lg:w-[45px] max-w-[45px] max-h-[45px]   object-contain"
                 />
               </div>
               <svg
@@ -76,11 +76,11 @@ export function HeaderContainer({
               </svg>
               <div className="flex flex-row gap-4">
                 {org?.logo_url && (
-                  <div className="min-w-[40px] min-h-[45px] flex items-center justify-center">
+                  <div className="  lg:min-w-[40px] lg:min-h-[45px]  flex items-center justify-center">
                     <img
                       src={org?.logo_url || ""}
                       alt="logo"
-                      className="max-w-[120px] max-h-[45px] w-auto h-auto object-contain"
+                      className="max-w-[40px] lg:max-w-[120px] max-h-[45px] w-auto h-auto object-contain"
                     />
                   </div>
                 )}
@@ -112,7 +112,7 @@ export function HeaderContainer({
                 </div>
               </div>
             </section>
-            <section className="flex flex-row gap-[6px]">
+            <section className="flex flex-row gap-[6px] mt-2 lg:mt-0">
               {isAdmin && (
                 <>
                   <span
@@ -138,7 +138,7 @@ export function HeaderContainer({
               )}
 
               <span
-                className=" flex px-4 cursor-pointer h-[40px] rounded-[4px]  blur-[ 20px] text-[14px] font-semibold leading-[-0.14px] text-[#211C1A]  items-center justify-center"
+                className=" flex px-4 cursor-pointer h-[32px] lg:h-[40px] rounded-[4px]  blur-[ 20px] text-[14px] font-semibold leading-[-0.14px] text-[#211C1A]  items-center justify-center"
                 style={{
                   background: "rgba(0, 0, 0, 0.04)",
                 }}

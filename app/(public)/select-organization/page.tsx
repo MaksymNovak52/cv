@@ -516,7 +516,7 @@ export default function OrganizationSelectionBlock() {
                   placeholder="Organization Name"
                   className="w-[90%] lg:w-[330px] bg-[#FAFAFA]"
                 />
-                <div className="w-[90%] lg:w-[330px]">
+                <div className="w-[100%] lg:w-[330px]">
                   <Input
                     value={emails}
                     onChange={(e) => {
@@ -530,7 +530,7 @@ export default function OrganizationSelectionBlock() {
                   />
                 </div>
                 <div
-                  className="flex flex-row  w-full  gap-2 items-end justify-end  cursor-pointer"
+                  className="flex flex-row    gap-2 items-end justify-end  w-[90%] lg:w-[330px] cursor-pointer"
                   onClick={() => setHandleViewUsers((prev) => !prev)}
                 >
                   <button className="text-[12px]  mx-0 px-0">
@@ -562,8 +562,8 @@ export default function OrganizationSelectionBlock() {
                 } rounded-2xl border gap-0 flex flex-col border-dashed`}
               >
                 {!logoFile ? (
-                  <>
-                    <div className="grid gap-1">
+                  <div className=" w-[80%] lg:w-full mx-auto">
+                    <div className="grid gap-1 ">
                       <svg
                         className="mx-auto"
                         width="40"
@@ -603,7 +603,7 @@ export default function OrganizationSelectionBlock() {
                         </label>
                       </div>
                     </div>
-                  </>
+                  </div>
                 ) : (
                   <div className="w-full p-2 bg-white rounded-lg border border-gray-300 flex items-center gap-4">
                     {preview ? (
