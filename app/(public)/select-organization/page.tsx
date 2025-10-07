@@ -433,7 +433,7 @@ export default function OrganizationSelectionBlock() {
                   <div
                     key={org.id}
                     onClick={() => handleSelectOrganization(org)}
-                    className="w-[90%] lg:w-[330px] min-h-[42px] cursor-pointer h-[42px] border rounded-md flex items-center justify-between px-[14px] bg-[#FAFAFA] border-[#F0F0F0]"
+                    className="w-[330px] min-h-[42px] cursor-pointer h-[42px] border rounded-md flex items-center justify-between px-[14px] bg-[#FAFAFA] border-[#F0F0F0]"
                   >
                     <label className="flex flex-row gap-2 items-center cursor-pointer">
                       <input
@@ -491,7 +491,7 @@ export default function OrganizationSelectionBlock() {
             {isAdmin && (
               <button
                 onClick={() => setIsCreating(true)}
-                className="w-[90%] lg:w-[330px] h-[42px] mt-[5px] border border-dashed rounded-md"
+                className="w-[330px] h-[42px] mt-[5px] border border-dashed rounded-md"
               >
                 + Create new
               </button>
@@ -499,7 +499,7 @@ export default function OrganizationSelectionBlock() {
           </div>
         ) : (
           <div
-            className={`flex flex-col gap-3 items-center lg:w-[330px] ${
+            className={`flex flex-col gap-3 items-center justify-center lg:w-[330px] ${
               showModal && "hidden"
             }`}
           >
@@ -509,14 +509,16 @@ export default function OrganizationSelectionBlock() {
               isEmpty={!name.trim()}
               showValidation
             >
-              <div className="flex flex-col gap-2">
-                <Input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Organization Name"
-                  className="w-[90%] lg:w-[330px] bg-[#FAFAFA]"
-                />
-                <div className="w-[100%] lg:w-[330px]">
+              <div className="flex flex-col gap-2 justify-center  items-center">
+                <div className="w-[330px] mx-auto flex  flex-col justify-start  items-center  ">
+                  <Input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Organization Name"
+                    className="w-[340px] bg-[#FAFAFA] "
+                  />
+                </div>
+                <div className="w-[330px] mx-auto flex  flex-col justify-start  items-center  ">
                   <Input
                     value={emails}
                     onChange={(e) => {
@@ -524,13 +526,13 @@ export default function OrganizationSelectionBlock() {
                       setEmails(e.target.value);
                     }}
                     placeholder="Unique emails "
-                    className="w-[90%] lg:w-[330px] bg-[#FAFAFA]"
+                    className="w-[340px] bg-[#FAFAFA]"
                     hasError={userErrors.length > 0}
                     label="Enter emails"
                   />
                 </div>
                 <div
-                  className="flex flex-row    gap-2 items-end justify-end  w-[90%] lg:w-[330px] cursor-pointer"
+                  className="flex flex-row    gap-2 items-end justify-end  w-[300px] cursor-pointer"
                   onClick={() => setHandleViewUsers((prev) => !prev)}
                 >
                   <button className="text-[12px]  mx-0 px-0">
@@ -540,7 +542,7 @@ export default function OrganizationSelectionBlock() {
                 </div>
 
                 {userErrors.length > 0 && (
-                  <div className="w-[90%] lg:w-[330px] bg-red-50 border border-red-300 text-red-700 p-2 rounded text-sm">
+                  <div className="w-[330px] bg-red-50 border border-red-300 text-red-700 p-2 rounded text-sm">
                     <ul className="list-disc pl-4">
                       {userErrors.map((e, i) => (
                         <li key={i}>
@@ -557,7 +559,7 @@ export default function OrganizationSelectionBlock() {
 
             <FormField label="Logo" isRequired={false} isEmpty={false}>
               <div
-                className={`w-[90%] lg:w-[330px] ${
+                className={`w-[330px] ${
                   !logoFile && "bg-gray-50 py-9 border-gray-300"
                 } rounded-2xl border gap-0 flex flex-col border-dashed`}
               >
