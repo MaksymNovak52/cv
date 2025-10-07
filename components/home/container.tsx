@@ -236,7 +236,7 @@ export function AllCandidatesList() {
           transition-all duration-300`}
       >
         <div className="w-full flex flex-col lg:flex-row items-start justify-between">
-          <span className="text-[#211C1A] text-[12px] font-semibold max-w-[490px]">
+          <span className="text-[#211C1A] text-[12px] font-semibold max-w-[70%]">
             {jobDetails?.description ?? "No description"}
           </span>
 

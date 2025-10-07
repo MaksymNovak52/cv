@@ -69,6 +69,45 @@ export default function OrganizationSelectionBlock() {
       .replace(/[^a-zA-Z0-9_-]/g, "_")
       .toLowerCase();
   }
+  const handleDeleteUser = async (userId: string, email: string) => {
+    try {
+      const response = await fetch("/api/admin/delete-user", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        console.error("❌ Error:", error);
+        return;
+      }
+
+      setCreatedUsers((prev) => prev.filter((u) => u.email !== email));
+      refetch();
+    } catch (err) {
+      console.error("💥 Error during user deletion:", err);
+    }
+  };
+  const getUserIdByEmail = async (email: string): Promise<string | null> => {
+    try {
+      const { data, error } = await supabase
+        .from("organization_users")
+        .select("user_id")
+        .eq("email", email)
+        .single();
+
+      if (error) {
+        console.error("❌ Error fetching user id:", error);
+        return null;
+      }
+
+      return data?.user_id || null;
+    } catch (err) {
+      console.error("💥 Error in getUserIdByEmail:", err);
+      return null;
+    }
+  };
   const handleSave = async () => {
     try {
       setUserErrors([]);
@@ -194,48 +233,34 @@ export default function OrganizationSelectionBlock() {
       console.error("💥 handleSave error:", err);
     }
   };
-
-  const handleDelete = async (orgId: string) => {
+  const handleDeleteOrganization = async (orgId: string) => {
     try {
       if (!orgId) {
-        console.error("❌ handleDelete: orgId is missing");
+        console.error("❌ handleDeleteOrganization: orgId is missing");
         return;
       }
 
-      const { data: orgData, error: fetchError } = await supabase
-        .from("organizations")
-        .select("id, name, logo_url")
-        .eq("id", orgId)
-        .single();
+      const { data: orgUsers, error: fetchUsersError } = await supabase
+        .from("organization_users")
+        .select("user_id, email")
+        .eq("organization_id", orgId);
 
-      if (fetchError || !orgData) {
-        console.error("❌ Could not fetch organization before delete");
+      if (fetchUsersError) {
+        console.error(
+          "❌ Failed to fetch users for the organization:",
+          fetchUsersError
+        );
         return;
       }
 
-      if (orgData.logo_url) {
-        try {
-          const cleanUrl = orgData.logo_url.split("?")[0];
-          const pathStart = cleanUrl.indexOf("/logo/") + "/logo/".length;
-          const oldPath = cleanUrl.substring(pathStart);
-
-          if (oldPath) {
-            const { error: removeError } = await supabase.storage
-              .from("logo")
-              .remove([oldPath]);
-
-            if (removeError) {
-              console.error(
-                "⚠️ Failed to remove logo from storage:",
-                removeError
-              );
-            } else {
-              console.log("✅ Logo removed from storage");
-            }
-          }
-        } catch (e) {
-          console.error("⚠️ Error parsing logo_url for deletion:", e);
+      if (orgUsers && orgUsers.length > 0) {
+        for (const user of orgUsers) {
+          await handleDeleteUser(user.user_id, user.email);
         }
+
+        console.log(`✅ All users removed from organization: ${orgId}`);
+      } else {
+        console.log("ℹ️ No users found for this organization.");
       }
 
       const { data: deleted, error: deleteError } = await supabase
@@ -253,9 +278,10 @@ export default function OrganizationSelectionBlock() {
         console.warn("⚠️ Organization not deleted. Probably RLS blocked it.");
         return;
       }
+
       refetch();
     } catch (err) {
-      console.error("💥 handleDelete unexpected error:", err);
+      console.error("💥 handleDeleteOrganization unexpected error:", err);
     }
   };
 
@@ -299,6 +325,7 @@ export default function OrganizationSelectionBlock() {
         .from("organization_users")
         .select("email, password")
         .eq("organization_id", org.id);
+      console.log("admklasmdkaskldmlkasdmask", data, org.id);
 
       if (error) {
         console.error("❌ Failed to fetch existing users:", error);
@@ -334,22 +361,38 @@ export default function OrganizationSelectionBlock() {
             {createdUsers.length > 0 ? (
               <ul className="space-y-2">
                 {createdUsers.map((u, i) => (
-                  <li
-                    key={i}
-                    className="border-b border-gray-100 pb-2 text-sm flex flex-col"
-                  >
-                    <span className="text-gray-700">
-                      Email: <span className="text-gray-500">{u.email}</span>
-                    </span>
-                    {u.password ? (
+                  <div className="">
+                    <li
+                      key={i}
+                      className="border-b border-gray-100 pb-2 text-sm flex flex-col"
+                    >
                       <span className="text-gray-700">
-                        Password:{" "}
-                        <span className="text-gray-500">{u.password}</span>
+                        Email: <span className="text-gray-500">{u.email}</span>
                       </span>
-                    ) : (
-                      <span className="text-gray-400 italic">existing</span>
-                    )}
-                  </li>
+                      {u.password ? (
+                        <span className="text-gray-700">
+                          Password:{" "}
+                          <span className="text-gray-500">{u.password}</span>
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 italic">existing</span>
+                      )}
+                      <button
+                        onClick={async () => {
+                          const userId = await getUserIdByEmail(u.email);
+                          if (userId) {
+                            {
+                              await handleDeleteUser(userId, u.email);
+                            }
+                          } else {
+                          }
+                        }}
+                        className="mt-2 flex items-center text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 size={16} className="mr-2" /> Delete User
+                      </button>
+                    </li>
+                  </div>
                 ))}
               </ul>
             ) : (
@@ -472,7 +515,7 @@ export default function OrganizationSelectionBlock() {
                         </button>
                         <button
                           onClick={(e) => {
-                            handleDelete(org.id);
+                            handleDeleteOrganization(org.id);
                             e.stopPropagation();
                           }}
                         >
