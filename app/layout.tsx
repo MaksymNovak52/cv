@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     title: "Rare Minds",
     description:
       "Rare Minds rare minds isn’t a talent pool. It’s an access key",
-    url: "https://yourdomain.com",
+    url: "https://cv-ten-tau-67.vercel.app",
     siteName: "Rare Minds",
     images: [
       {
@@ -48,12 +48,6 @@ export const metadata: Metadata = {
         alt: "Rare Minds Icon",
       },
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Rare Minds",
-    description:
-      "Rare Minds rare minds isn’t a talent pool. It’s an access key",
   },
 };
 
@@ -68,24 +62,6 @@ export default function RootLayout({
         name="viewport"
         content="width=device-width, initial-scale=1, viewport-fit=cover"
       />
-      <head>
-        <meta property="og:title" content="Rare Minds" />
-        <meta
-          property="og:description"
-          content="Rare Minds rare minds isn’t a talent pool. It’s an access key"
-        />
-        <meta property="og:image" content="/brain-128.ico" />
-        <meta property="og:url" content="https://yourdomain.com" />{" "}
-        {/* Заміни на свій домен */}
-        <meta name="twitter:title" content="Rare Minds" />
-        <meta
-          name="twitter:description"
-          content="Rare Minds rare minds isn’t a talent pool. It’s an access key"
-        />
-        <meta name="twitter:image" content="/brain-128.ico" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </head>
-
       <body
         className={`antialiased ${miriamLibre.variable} ${ebGaramond.variable}`}
         style={{
