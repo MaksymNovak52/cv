@@ -18,7 +18,7 @@ const ebGaramond = EB_Garamond({
 
 export const metadata: Metadata = {
   title: "Rare Minds",
-  description: "Rare Mindsrare minds isn’t a talent pool.It’s an access key",
+  description: "Rare Minds rare minds isn’t a talent pool. It’s an access key",
   icons: {
     icon: [
       {
@@ -34,6 +34,27 @@ export const metadata: Metadata = {
     ],
     apple: "/brain-128.ico",
   },
+  openGraph: {
+    title: "Rare Minds",
+    description:
+      "Rare Minds rare minds isn’t a talent pool. It’s an access key",
+    url: "https://yourdomain.com",
+    siteName: "Rare Minds",
+    images: [
+      {
+        url: "/brain-128.ico",
+        width: 128,
+        height: 128,
+        alt: "Rare Minds Icon",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Rare Minds",
+    description:
+      "Rare Minds rare minds isn’t a talent pool. It’s an access key",
+  },
 };
 
 export default function RootLayout({
@@ -47,15 +68,28 @@ export default function RootLayout({
         name="viewport"
         content="width=device-width, initial-scale=1, viewport-fit=cover"
       />
+      <head>
+        <meta property="og:title" content="Rare Minds" />
+        <meta
+          property="og:description"
+          content="Rare Minds rare minds isn’t a talent pool. It’s an access key"
+        />
+        <meta property="og:image" content="/brain-128.ico" />
+        <meta property="og:url" content="https://yourdomain.com" />{" "}
+        {/* Заміни на свій домен */}
+        <meta name="twitter:title" content="Rare Minds" />
+        <meta
+          name="twitter:description"
+          content="Rare Minds rare minds isn’t a talent pool. It’s an access key"
+        />
+        <meta name="twitter:image" content="/brain-128.ico" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </head>
 
       <body
         className={`antialiased ${miriamLibre.variable} ${ebGaramond.variable}`}
         style={{
           background: "#E6E5E3",
-          // backgroundRepeat: "no-repeat",
-          // backgroundAttachment: "fixed",
-          // backgroundSize: "cover",
-          // minHeight: "100vh",
         }}
       >
         {children}
