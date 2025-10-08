@@ -60,7 +60,7 @@ export function HeaderContainer({
             <section className="flex flex-row gap-2 lg:gap-3 items-center">
               <div className=" flex items-center justify-center">
                 <img
-                  src={"./logo.png"}
+                  src="/newLogo.png"
                   alt="logo"
                   className="w-[40px] lg:w-[45px] max-w-[45px] max-h-[45px]   object-contain"
                 />

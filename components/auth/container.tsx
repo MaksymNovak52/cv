@@ -122,11 +122,11 @@ export function SignInContainer() {
 
       <form
         onSubmit={onSubmit}
-        className="flex flex-col w-[377px] sm:w-[400px] lg:w-[464px] h-[430px] mx-auto p-6  bg-white shadow-lg rounded-xl absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] py-[65px]"
+        className="flex flex-col w-[377px] sm:w-[400px] lg:w-[464px] h-[430px] mx-auto p-6  bg-white shadow-lg rounded-xl absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] py-[45px]"
         noValidate
       >
         <div className="w-[330px] mx-auto">
-          <div className=" flex items-center justify-center relative pb-4">
+          {/* <div className=" flex items-center justify-center relative pb-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="17"
@@ -200,8 +200,16 @@ export function SignInContainer() {
                 fill="#242537"
               />
             </svg>
+          </div> */}
+          <div className="w-full ">
+            <Image
+              src="/newLogo.png"
+              alt="logo"
+              width={60}
+              height={60}
+              className="mx-auto  "
+            />
           </div>
-
           <h2 className="text-[12px] font-semibold text-center text-[#211C1A] leading-[-0.12px] w-[186px] mx-auto mt-[17px]">
             Enter the information we have provided to you to continue
           </h2>
