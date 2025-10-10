@@ -157,7 +157,7 @@ const getCandidateFormFields = (
         label="Salary expected, in $usd"
         placeholder="Enter expected salary"
         value={candidateData.salary}
-        isRightBlock={true}
+        // isRightBlock={true}
         equityChecked={!!candidateData.hasEquity}
         onEquityChange={(checked) =>
           updateCandidateData({ hasEquity: checked })

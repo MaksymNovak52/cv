@@ -113,7 +113,7 @@ export function AllCandidatesList() {
     orgId as string
   );
   const { data: jobDetails } = useJobDetails((selectedJobId || "") as string);
-  const { data: candidatesByJob = [] } = useCandidatesByJob(
+  const { data: candidatesByJob = [], refetch } = useCandidatesByJob(
     (selectedJobId || "") as string
   );
   const { data: favoritesCount } = useFavoritesCount(
@@ -176,6 +176,24 @@ export function AllCandidatesList() {
     setEditCandidate(c);
     setEditApplicationId(c.application_id);
     setIsEditModalOpen(true);
+  };
+  const handleDeleteCandidate = async (candidateId: string) => {
+    try {
+      const res = await fetch(`/api/candidates/${candidateId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Failed to delete candidate");
+      }
+      refetch();
+    } catch (e) {
+      console.error("❌ Error deleting candidate:", e);
+    }
   };
 
   return (
@@ -301,9 +319,11 @@ export function AllCandidatesList() {
             selectedJobId={(selectedJobId || "") as string}
             handleCandidateClick={handleCandidateClick}
             onEditCandidate={handleEditCandidate}
+            handleDeleteCandidate={handleDeleteCandidate}
           />
         ) : (
           <CandidatesTable
+            handleDeleteCandidate={handleDeleteCandidate}
             setIsStickyBtn={setIsStickyBtn}
             candidatesByJob={filteredCandidates}
             selectedJobId={(selectedJobId || "") as string}

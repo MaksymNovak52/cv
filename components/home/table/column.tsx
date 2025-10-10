@@ -4,6 +4,7 @@ import { cleanClearanceStatus } from "@/lib/candidate";
 import { truncateWords } from "@/lib/text";
 import { CandidateRow } from "@/type";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import { Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 
@@ -11,7 +12,8 @@ export default function useTableColumns(
   handleCandidateClick: (candidate: CandidateRow) => void,
   onEditCandidate: (candidate: CandidateRow) => void,
   toggleFav: (id: string) => void,
-  isAdmin: boolean
+  isAdmin: boolean,
+  handleDeleteCandidate: (id: string) => void
 ) {
   const columnHelper = createColumnHelper<CandidateRow>();
   const columns = useMemo<ColumnDef<CandidateRow, any>[]>(
@@ -193,16 +195,16 @@ export default function useTableColumns(
                     /month
                   </span>
                 </div>
-                {c.has_equity && (
+                {/* {c.has_equity && (
                   <p className="text-[12px] text-[#A6A4A3] font-semibold">
                     +Equity Package
                   </p>
-                )}
+                )} */}
               </div>
 
               {isAdmin && (
                 <button
-                  className="p-[8px] border border-[#E5E5E5]  hover:bg-gray-100 rounded-md transition-colors absolute right-[54px] top-1 "
+                  className="p-[8px] border border-[#E5E5E5]  hover:bg-gray-100 rounded-md transition-colors absolute right-[94px] top-0 "
                   onClick={(e) => {
                     e.stopPropagation();
                     onEditCandidate(c);
@@ -224,7 +226,7 @@ export default function useTableColumns(
                 </button>
               )}
               <button
-                className="p-2 hover:bg-gray-100 rounded-md transition-colors absolute right-0 -top-1"
+                className=" hover:bg-gray-100 rounded-md transition-colors absolute   right-0 top-0"
                 onClick={(e) => {
                   e.stopPropagation();
                   toggleFav(c.application_id);
@@ -249,6 +251,19 @@ export default function useTableColumns(
                   />
                 </svg>
               </button>
+
+              {isAdmin && (
+                <button
+                  className="p-[7px] hover:bg-gray-100 rounded-md transition-colors absolute border right-[48px]  top-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteCandidate(c.id);
+                  }}
+                  aria-label={c.is_favorite ? "Unfavorite" : "Favorite"}
+                >
+                  <Trash2Icon size={24} color="black" strokeWidth={0.9} />
+                </button>
+              )}
               {c.rejection_reason && c.rejection_reason?.length > 0 ? (
                 <div className="flex items-center  w-full justify-between text-sm text-[#211C1A]">
                   <div className="flex flex-row items-center">
@@ -312,19 +327,19 @@ export default function useTableColumns(
                     </div>
                   </div>
                   <button className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors font-medium">
-                    [R] Unreject
+                    Unreject
                   </button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2  w-full justify-end text-sm text-[#211C1A]">
                   <button className="flex items-center justify-center bg-[#D3EBE2] w-[106px] h-[40px] rounded-md hover:bg-green-200 transition-colors font-medium">
-                    [A] Approve
+                    Approve
                   </button>
                   <button className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors font-medium">
-                    [H] Not Sure
+                    Not Sure
                   </button>
                   <button className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors font-medium">
-                    [R] Reject
+                    Reject
                   </button>
                 </div>
               )}

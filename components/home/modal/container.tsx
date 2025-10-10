@@ -214,7 +214,7 @@ export function CandidateModal({
     try {
       await rejectStatus({
         applicationId: candidate.application_id,
-        statusName: "To Interview",
+        statusName: "Pending",
         rejectionReason: "",
       });
       setIsRejected(true);
@@ -301,7 +301,7 @@ export function CandidateModal({
           onTouchEnd={onTouchEnd}
           ref={contentRef}
         >
-          <div className="flex-1   pb-20 ">
+          <div className="flex-1 pb-20 ">
             <div className="px-6 ">
               <ModalHeader
                 candidate={candidate}
@@ -339,6 +339,7 @@ export function CandidateModal({
           </div>
 
           <CandidateFooter
+            isAdmin={isAdmin}
             candidate={candidate}
             hasScroll={hasScroll}
             isRejected={isRejected}

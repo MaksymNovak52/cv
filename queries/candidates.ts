@@ -223,6 +223,8 @@ export const useUpdateApplicationStatus = (jobId?: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["candidates"] });
       queryClient.invalidateQueries({ queryKey: ["counts"] });
+      queryClient.invalidateQueries({ queryKey: ["jobs", jobId] });
+      queryClient.invalidateQueries({ queryKey: ["pendingCounts"] });
 
       queryClient.invalidateQueries({ queryKey: ["favoritesCount", jobId] });
     },

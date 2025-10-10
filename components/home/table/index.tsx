@@ -178,9 +178,12 @@ export function CandidatesTable({
   candidatesByJob,
   handleCandidateClick,
   setIsStickyBtn,
+  handleDeleteCandidate,
+
   onEditCandidate,
 }: {
   onEditCandidate: (candidate: CandidateRow) => void;
+  handleDeleteCandidate: (candidateId: string) => void;
   setIsStickyBtn: React.Dispatch<SetStateAction<boolean>>;
   selectedJobId: string;
   candidatesByJob: CandidateRow[];
@@ -208,7 +211,8 @@ export function CandidatesTable({
     handleCandidateClick,
     onEditCandidate,
     toggleFav,
-    isAdmin
+    isAdmin,
+    handleDeleteCandidate
   );
   const table = useReactTable({
     data: candidatesByJob || [],

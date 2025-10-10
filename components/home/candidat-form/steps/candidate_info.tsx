@@ -69,7 +69,7 @@ export function CandidateInfoBlock({
           ))}
         </div>
         <div className="  pl-6 lg:pl-0">
-          <FormField label="Highlights">
+          <FormField label="Short Brief">
             <TextArea
               placeholder="Key achievements, notable projects, impact delivered"
               value={candidateData.highlights}
@@ -78,7 +78,7 @@ export function CandidateInfoBlock({
               }
               isRequired
               showValidation={showValidationErrors}
-              label="Highlights"
+              label="Short Brief"
             />
           </FormField>
         </div>
@@ -90,7 +90,7 @@ export function CandidateInfoBlock({
               onChange={(e) => updateCandidateData({ skills: e.target.value })}
               isRequired
               showValidation={showValidationErrors}
-              label="Requirements met"
+              label="Summary"
             />
           </FormField>
         </div>

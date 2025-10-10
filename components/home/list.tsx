@@ -3,6 +3,7 @@ import { truncateWords } from "@/lib/text";
 import { useUser } from "@/provider";
 import { useToggleFavorite } from "@/queries/candidates";
 import { CandidateRow } from "@/type";
+import { Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 function VisibleCandidatesTracker({
@@ -81,10 +82,12 @@ export function CandidatesList({
   selectedJobId,
   handleCandidateClick,
   onEditCandidate,
+  handleDeleteCandidate,
 }: {
   onEditCandidate: (candidate: CandidateRow) => void;
   handleCandidateClick: (candidate: CandidateRow) => void;
   selectedJobId: string;
+  handleDeleteCandidate: (id: string) => void;
   candidatesByJob: CandidateRow[] | undefined;
 }) {
   const { mutate: toggleFav } = useToggleFavorite(selectedJobId);
@@ -103,7 +106,7 @@ export function CandidatesList({
           >
             {isAdmin && (
               <button
-                className="p-[6px]   hover:bg-gray-100 rounded-md transition-colors absolute right-[48px] top-[10px] "
+                className="p-[2px]   hover:bg-gray-100 rounded-md transition-colors absolute right-[62px] top-[11px] "
                 onClick={(e) => {
                   e.stopPropagation();
                   onEditCandidate(candidate);
@@ -124,8 +127,19 @@ export function CandidatesList({
                 </svg>
               </button>
             )}
+            {isAdmin && (
+              <button
+                className="p-[2px] hover:bg-gray-100 rounded-md transition-colors absolute   right-[38px] top-[10px]"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteCandidate(candidate.id);
+                }}
+              >
+                <Trash2Icon size={22} color="black" strokeWidth={0.9} />
+              </button>
+            )}
             <button
-              className="p-2 hover:bg-gray-100 rounded-md transition-colors absolute right-[13px] top-[10px] z-10"
+              className="px-[6px] py-[3px]  hover:bg-gray-100 rounded-md max-h-[38px] transition-colors absolute right-[13px] top-[12px] z-10"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFav(candidate.application_id);
@@ -281,11 +295,11 @@ export function CandidatesList({
                     /month
                   </span>
                 </div>
-                {candidate.has_equity && (
+                {/* {candidate.has_equity && (
                   <p className="text-[12px] text-[#A6A4A3] font-semibold">
                     +Equity Package
                   </p>
-                )}
+                )} */}
               </div>
 
               <div className="mt-auto">
@@ -351,20 +365,22 @@ export function CandidatesList({
                         </p>
                       </div>
                     </div>
-                    <button className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors font-medium">
-                      [R] Unreject
-                    </button>
+                    {isAdmin && (
+                      <button className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors font-medium">
+                        Unreject
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 text-sm text-[#211C1A] font-semibold">
                     <button className="flex items-center justify-center bg-[#D3EBE2] w-[106px] h-[40px] rounded-md hover:bg-green-200 transition-colors">
-                      [A] Approve
+                      Approve
                     </button>
                     <button className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors">
-                      [H] Hold
+                      Hold
                     </button>
                     <button className="flex items-center justify-center border border-[#E5E5E5] w-[106px] h-[40px] rounded-md transition-colors">
-                      [R] Reject
+                      Reject
                     </button>
                   </div>
                 )}

@@ -1,4 +1,5 @@
 import { CandidateRow } from "@/type";
+import { useEffect } from "react";
 
 export function CandidateFooter({
   candidate,
@@ -12,8 +13,10 @@ export function CandidateFooter({
   handleInterview,
   handleHold,
   setIsRejected,
+  isAdmin,
   setRejectionError,
 }: {
+  isAdmin: boolean;
   candidate: CandidateRow;
   hasScroll: boolean;
   isRejected: boolean;
@@ -27,6 +30,38 @@ export function CandidateFooter({
   setIsRejected: (rejected: boolean) => void;
   setRejectionError: (error: string) => void;
 }) {
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (candidate.rejection_reason) {
+        if (e.key.toLowerCase() === "r") handleUnReject(candidate.id);
+        return;
+      }
+
+      switch (e.key.toLowerCase()) {
+        case "a":
+          !isRejected && handleInterview(candidate.id);
+          break;
+        case "h":
+          !isRejected && handleHold(candidate.id);
+          break;
+        case "r":
+          setIsRejected(true);
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [
+    candidate.id,
+    handleInterview,
+    handleHold,
+    handleReject,
+    isRejected,
+    setIsRejected,
+  ]);
   return (
     <div
       className={`absolute bottom-10 lg:bottom-0 left-0 right-0 bg-white flex lg:flex-row ${

@@ -5,7 +5,7 @@ export function RightAsside({ candidate }: { candidate: CandidateRow }) {
     <div className="flex flex-col items-start  w-full gap-[40px] lg:ml-6 ">
       <div className="w-full  flex flex-col items-start  relative">
         <h3 className="text-[#A4A4A3] uppercase text-[10px] font-bold leading-[-0.1px] whitespace-nowrap">
-          Highlights:
+          Short Brief:
         </h3>
         <p
           className="text-[#615D5C] text-start text-[12px] font-bold leading-[-0.12px] break-words whitespace-pre-wrap"
@@ -22,7 +22,7 @@ export function RightAsside({ candidate }: { candidate: CandidateRow }) {
 
       <div className="w-full  flex flex-col items-start">
         <h3 className="text-[#A4A4A3] uppercase text-[10px] font-bold leading-[-0.1px] whitespace-nowrap">
-          Requirements:{" "}
+          Summary:{" "}
         </h3>
         <p
           className="text-[#615D5C] text-start text-[12px] font-bold leading-[-0.12px] break-words whitespace-pre-wrap"
@@ -31,7 +31,6 @@ export function RightAsside({ candidate }: { candidate: CandidateRow }) {
             wordBreak: "break-word",
           }}
         >
-          {" "}
           {candidate.requirements
             ? candidate.requirements.replace(/[{}"']/g, "")
             : "	•	7+ years of experience in React Native and mobile development Has shipped apps to App Store & Google Play and also has experience with automated pipelines (App Center, GitHub/GitLab CI/CD, CodePush) Worked on hardware-integrated apps (Bluetooth mask device) and optimized native code Has been working with advanced animations & gesture handling (Reanimated, parallel native threads) Has been in collaboration with designers, backend, QA, PMs in a cross-functional setup, comfortable working in startup environment"}{" "}
