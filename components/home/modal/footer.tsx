@@ -83,13 +83,7 @@ ${hasScroll ? "border-t border-[#E3E3E3]" : ""}`}
             /month
           </span>
         </div>
-        <div className="h-[20px]">
-          {candidate.has_equity && (
-            <p className="text-[12px] text-[#A6A4A3] font-bold">
-              +Equity Package
-            </p>
-          )}
-        </div>
+        <div className="h-[20px]"></div>
       </div>
       {isRejected && (
         <div className="absolute bottom-[24px] lg:bottom-[9px] right-[1.5px]  z-[20] lg:right-4 bg-[#1C2831] w-full  lg:w-[451px] h-[126px] p-[12px]  rounded-lg flex flex-col justify-center gap-2 ">

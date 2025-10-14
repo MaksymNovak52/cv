@@ -117,6 +117,7 @@ export const useToggleFavorite = (jobId?: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["candidates", jobId] });
       queryClient.invalidateQueries({ queryKey: ["favoritesCount", jobId] });
+      queryClient.invalidateQueries({ queryKey: ["candidates"] });
     },
   });
 };

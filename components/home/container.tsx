@@ -11,6 +11,7 @@ import {
   usePendingCountsForAllJobs,
 } from "@/queries/candidates";
 import { CandidateRow, Job, TabKey } from "@/type";
+import { useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CustomTabs, Dotbage, GridViewContainer } from "../ui";
@@ -86,6 +87,8 @@ function VisibleCandidatesTracker({
 }
 
 export function AllCandidatesList() {
+  const queryClient = useQueryClient();
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editCandidate, setEditCandidate] = useState<CandidateRow | null>(null);
@@ -181,16 +184,48 @@ export function AllCandidatesList() {
     try {
       const res = await fetch(`/api/candidates/${candidateId}`, {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || "Failed to delete candidate");
       }
-      refetch();
+
+      const queryKey = ["candidates", selectedJobId];
+      const currentCandidates =
+        queryClient.getQueryData<CandidateRow[]>(queryKey) ?? [];
+
+      const updatedCandidates = currentCandidates.filter(
+        (c) => c.id !== candidateId
+      );
+
+      queryClient.setQueryData(queryKey, updatedCandidates);
+
+      if (selectedCandidate?.id === candidateId) {
+        const deletedIndex = currentCandidates.findIndex(
+          (c) => c.id === candidateId
+        );
+
+        if (updatedCandidates.length === 0) {
+          handleCloseModal();
+        } else {
+          const nextCandidate =
+            updatedCandidates[deletedIndex] ??
+            updatedCandidates[deletedIndex - 1];
+
+          if (nextCandidate) {
+            handleCandidateChange(nextCandidate);
+          } else {
+            handleCloseModal();
+          }
+        }
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: ["favoritesCount", selectedJobId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["pendingCounts"] });
     } catch (e) {
       console.error("❌ Error deleting candidate:", e);
     }
@@ -249,7 +284,12 @@ export function AllCandidatesList() {
           ${
             selectedJobId == null
               ? "rounded-tr-lg rounded-b-lg"
-              : "rounded-b-lg rounded-tr-lg"
+              : "rounded-b-lg rounded-tr-lg "
+          }
+          ${
+            selectedJobId === jobs?.[0]?.job_id
+              ? "rounded-tl- none"
+              : "  rounded-tl-lg"
           }
           transition-all duration-300`}
       >
@@ -348,6 +388,7 @@ export function AllCandidatesList() {
             selectedJobId={(selectedJobId || "") as string}
             onCandidateChange={handleCandidateChange}
             onEditCandidate={handleEditCandidate}
+            handleDeleteCandidate={handleDeleteCandidate}
           />
         )}
       </section>

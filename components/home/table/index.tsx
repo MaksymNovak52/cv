@@ -296,11 +296,11 @@ export function CandidatesTable({
           ))}
         </thead>
 
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="bg-white divide-y divide-gray-200 ">
           {rows.map((row, rowIdx) => (
             <tr
               key={row.id}
-              className="hover:bg-gray-50 transition-colors rounded-lg"
+              className="hover:bg-gray-50 transition-colors rounded-lg "
             >
               {row.getVisibleCells().map((cell) => (
                 <td
@@ -310,7 +310,7 @@ export function CandidatesTable({
                       ? setFirstCellRef(rowIdx)
                       : undefined
                   }
-                  className="px-4 pt-4 pb-4 align-top"
+                  className="px-4 pt-4 pb-4 align-top rounded-lg "
                   style={{ width: cell.column.getSize(), height: "150px" }}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

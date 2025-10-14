@@ -289,7 +289,7 @@ export const updateApplicationStatusByName = async (
   statusName: string,
   rejectionReason?: string
 ) => {
-  const { error } = await supabase.rpc("update_application_status_by_name", {
+  const { error } = await supabase.rpc("update_application_status_with_notes", {
     _application_id: applicationId,
     _status_name: statusName,
     _rejection_reason: rejectionReason ?? "",

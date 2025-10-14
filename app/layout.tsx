@@ -23,16 +23,16 @@ export const metadata: Metadata = {
     icon: [
       {
         media: "(prefers-color-scheme: light)",
-        url: "/brain-128.ico",
-        href: "/brain-128.ico",
+        url: "/newLogo.png",
+        href: "/newLogo.png",
       },
       {
         media: "(prefers-color-scheme: dark)",
-        url: "/brain-128.ico",
-        href: "/brain-128.ico",
+        url: "/newLogo.png",
+        href: "/newLogo.png",
       },
     ],
-    apple: "/brain-128.ico",
+    apple: "/newLogo.png",
   },
   openGraph: {
     title: "Rare Minds",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     siteName: "Rare Minds",
     images: [
       {
-        url: "/brain-128.ico",
+        url: "/newLogo.png",
         width: 128,
         height: 128,
         alt: "Rare Minds Icon",

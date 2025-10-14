@@ -34,7 +34,7 @@ export const Card = ({
     >
       <div
         className={`
-          absolute inset-0 rounded-t-lg bg-[#F9F7F5]
+          absolute inset-0 rounded-t-lg bg-[#F3F2F1]
           transition-opacity duration-300 pointer-events-none
           ${isActive ? "opacity-100" : "opacity-0"}
         `}
